@@ -1,4 +1,8 @@
 ﻿
+const SUPABASE_URL = 'https://xdwvoqyausmpioslahwy.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhkd3ZvcXlhdXNtcGlvc2xhaHd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEyNDU2MTgsImV4cCI6MjA4NjgyMTYxOH0.F1pNn98WO-BxhWbxZ0c0VDzoDSlNJFTEe4Adtxykqtw';
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
 // --- CAROUSEL LOGIC ---
 document.addEventListener('DOMContentLoaded', () => {
     const track = document.querySelector('.carousel-track');
@@ -109,12 +113,12 @@ const questions = [
     {
         id: 5,
         block: "Estrategia",
-        question: "Resiliencia (Aterrizaje): ¿Tu empresa sabría 'aterrizar' y mantenerse si el mercado dejara de crecer?",
+        question: "Resiliencia: ¿Tu empresa sabría 'aterrizar' y mantenerse si el mercado dejara de crecer?",
         options: [
             { text: "Si dejamos de crecer, nos hundimos (Adicción al crecimiento).", points: 0, recomendacion: "⚠️ Área Crítica: Adicción al crecimiento." },
             { text: "Sufriríamos mucho, no tenemos plan B.", points: 3, recomendacion: "Falta de plan B." },
             { text: "Tenemos ahorros y estructura para aguantar un mercado estancado.", points: 7, recomendacion: "Buena estructura financiera." },
-            { text: "Resiliencia total: priorizamos la estabilidad al volumen.", points: 10, recomendacion: "Resiliencia total." }
+            { text: "Priorizamos la estabilidad al volumen.", points: 10, recomendacion: "Resiliencia total." }
         ]
     },
     {
@@ -169,7 +173,7 @@ const questions = [
         options: [
             { text: "Buscamos 'clones' que piensen igual.", points: 0, recomendacion: "⚠️ Área Crítica: Falta de diversidad." },
             { text: "Intentamos ser abiertos, pero no hay planes reales.", points: 3, recomendacion: "Intención sin plan." },
-            { text: "Tenemos cuotas de diversidad y currículum ciego.", points: 7, recomendacion: "Medidas activas de diversidad." },
+            { text: "Tenemos cuotas de diversidad", points: 7, recomendacion: "Medidas activas de diversidad." },
             { text: "La diversidad es nuestra mayor fuerza y está en todos los niveles.", points: 10, recomendacion: "Diversidad integrada." }
         ]
     },
@@ -606,7 +610,7 @@ window.handleAnswer = function (optionIndex) {
     renderQuestion();
 };
 
-function finishQuiz() {
+async function finishQuiz() {
     const categoryScores = {
         "Estrategia": 0, "Social": 0, "Ecología": 0,
         "Justicia": 0, "Gobernanza": 0, "Clientes": 0, "Impacto": 0
@@ -616,29 +620,82 @@ function finishQuiz() {
         if (categoryScores[rec.category] !== undefined) categoryScores[rec.category] += rec.points;
     });
 
-    const historyEntry = {
-        date: new Date().toLocaleDateString(),
-        timestamp: Date.now(),
-        companyName: companyName,
-        totalScore: totalScore,
-        blockScores: categoryScores,
-        savedRecommendations: userRecommendations
-    };
+    // Validar que hay nombre de empresa (por si acaso)
+    if (!companyName) companyName = "Anónimo";
 
-    const history = JSON.parse(localStorage.getItem('ebcAuditHistory')) || [];
-    history.push(historyEntry);
-    localStorage.setItem('ebcAuditHistory', JSON.stringify(history));
+    // Feedback Visual: Guardando...
+    const quizContainer = document.getElementById('quiz-container');
+    if (quizContainer) {
+        quizContainer.innerHTML = `
+            <div class="quiz-card fade-in" style="text-align:center;">
+                <i class="fas fa-cloud-upload-alt" style="font-size: 4rem; color: #2e7d32; margin-bottom: 1.5rem;"></i>
+                <h2>Guardando resultados en la nube...</h2>
+                <div class="spinner" style="border: 4px solid #f3f3f3; border-top: 4px solid #2e7d32; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto;"></div>
+                <p>Por favor espera un momento.</p>
+            </div>
+            <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
+        `;
+    }
 
-    // Save active results for immediate rendering
-    sessionStorage.setItem('active_results', JSON.stringify({
-        company: companyName,
-        score: totalScore,
+    // Preparar objeto resultados
+    const resultadosJSON = {
         categoryScores: categoryScores,
         recommendations: userRecommendations,
-        timestamp: Date.now()
-    }));
+        totalScore: totalScore
+    };
 
-    window.location.href = 'resultados.html';
+    try {
+        const { data, error } = await supabase
+            .from('auditorias')
+            .insert([
+                {
+                    empresa: companyName,
+                    puntos: totalScore,
+                    resultados: resultadosJSON,
+                    fecha: new Date().toISOString()
+                },
+            ]);
+
+        if (error) throw error;
+
+        // Save active results for immediate rendering (keep this for session persistence)
+        sessionStorage.setItem('active_results', JSON.stringify({
+            company: companyName,
+            score: totalScore,
+            categoryScores: categoryScores,
+            recommendations: userRecommendations,
+            timestamp: Date.now()
+        }));
+
+        window.location.href = 'resultados.html';
+
+    } catch (err) {
+        console.error("Error guardando en Supabase:", err);
+        alert("Hubo un error al guardar los datos en la nube. Se guardarán localmente.");
+
+        // Fallback localstorage (opcional, pero buena práctica)
+        const historyEntry = {
+            date: new Date().toLocaleDateString(),
+            timestamp: Date.now(),
+            companyName: companyName,
+            totalScore: totalScore,
+            blockScores: categoryScores,
+            savedRecommendations: userRecommendations
+        };
+        const history = JSON.parse(localStorage.getItem('ebcAuditHistory')) || [];
+        history.push(historyEntry);
+        localStorage.setItem('ebcAuditHistory', JSON.stringify(history));
+
+        sessionStorage.setItem('active_results', JSON.stringify({
+            company: companyName,
+            score: totalScore,
+            categoryScores: categoryScores,
+            recommendations: userRecommendations,
+            timestamp: Date.now()
+        }));
+
+        window.location.href = 'resultados.html';
+    }
 }
 
 function checkAndRenderResults() {
@@ -928,99 +985,120 @@ function renderAccordion(data) {
     });
 }
 
-function initEvolutionChart() {
-    let history = [];
-    try {
-        history = JSON.parse(localStorage.getItem('ebcAuditHistory')) || [];
-    } catch (e) {
-        console.error("Error parsing history:", e);
-        localStorage.removeItem('ebcAuditHistory');
-        history = [];
-    }
+// --- HISTORY & EVOLUTION CHART LOGIC (SUPABASE) ---
 
+async function initEvolutionChart() {
+    // Solo ejecutar si estamos en la página de evolución
     const selector = document.getElementById('companySelector');
-    const tableCard = document.getElementById('history-table-card');
-    const chartCanvas = document.getElementById('evolutionChart');
+    if (!selector) return;
 
-    if (!history.length) {
-        if (selector) selector.innerHTML = '<option>No hay auditorías registradas</option>';
-        if (tableCard) tableCard.style.display = 'none';
-        const chartContainer = chartCanvas ? chartCanvas.parentElement : null;
-        if (chartContainer) chartContainer.innerHTML = '<p style="text-align:center; padding:2rem; color:#7f8c8d;">No hay auditorías registradas todavía.</p>';
-        return;
-    }
+    try {
+        // 1. Obtener empresas únicas de Supabase
+        const { data, error } = await supabase
+            .from('auditorias')
+            .select('empresa');
 
-    if (tableCard) tableCard.style.display = 'block';
+        if (error) throw error;
 
-    // Populate Selector with unique company names
-    if (selector) {
-        const companies = [...new Set(history.map(h => h.companyName))];
-        selector.innerHTML = ''; // Clear options
+        // Extraer nombres únicos
+        const companies = [...new Set(data.map(item => item.empresa))];
 
-        if (companies.length > 0) {
-            companies.forEach(company => {
-                const option = document.createElement('option');
-                option.value = company;
-                option.textContent = company;
-                selector.appendChild(option);
-            });
+        selector.innerHTML = '<option value="">Selecciona una empresa...</option>';
 
-            // Set initial state
-            let initialCompany = companies[0];
-            const activeData = JSON.parse(sessionStorage.getItem('active_results'));
-            if (activeData && activeData.company && companies.includes(activeData.company)) {
-                initialCompany = activeData.company;
-            }
-
-            selector.value = initialCompany;
-            updateEvolutionUI(history, initialCompany);
-
-            selector.addEventListener('change', () => {
-                updateEvolutionUI(history, selector.value);
-            });
-
-            // Bind New Audit Button
-            const newAuditBtn = document.querySelector('section#evolucion .primary-btn');
-            if (newAuditBtn) {
-                newAuditBtn.onclick = (e) => {
-                    e.preventDefault();
-                    const selectedCompany = selector.value;
-                    if (selectedCompany) {
-                        sessionStorage.setItem('prefill_company', selectedCompany);
-                        window.location.href = 'auditoria.html';
-                    }
-                };
-            }
-        } else {
-            selector.innerHTML = '<option>No hay datos</option>';
+        if (companies.length === 0) {
+            const resultCard = document.querySelector('.card h3').parentNode; // Parent of "Progreso Histórico"
+            if (resultCard) resultCard.innerHTML += '<p>No hay auditorías registradas en la nube.</p>';
+            return;
         }
+
+        companies.forEach(company => {
+            const option = document.createElement('option');
+            option.value = company;
+            option.textContent = company;
+            selector.appendChild(option);
+        });
+
+        // 2. Event Listener para cargar historial
+        selector.addEventListener('change', async (e) => {
+            const company = e.target.value;
+            if (company) {
+                await loadCompanyHistory(company);
+            } else {
+                hideHistoryUI();
+            }
+        });
+
+        // Pre-seleccionar si venimos de guardar un resultado
+        const activeData = JSON.parse(sessionStorage.getItem('active_results'));
+        if (activeData && activeData.company && companies.includes(activeData.company)) {
+            selector.value = activeData.company;
+            await loadCompanyHistory(activeData.company);
+        }
+
+    } catch (err) {
+        console.error("Error cargando empresas:", err);
+        selector.innerHTML = '<option>Error al cargar</option>';
     }
 }
 
-function updateEvolutionUI(history, filterCompany) {
-    let filteredData = history;
-    if (filterCompany !== 'all') {
-        filteredData = history.filter(h => h.companyName === filterCompany);
+async function loadCompanyHistory(companyName) {
+    const tableCard = document.getElementById('history-table-card');
+    const tableBody = document.getElementById('history-table-body');
+
+    // Mostrar estado de carga (opcional)
+    if (tableBody) tableBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Cargando historial...</td></tr>';
+    if (tableCard) tableCard.style.display = 'block';
+
+    try {
+        const { data, error } = await supabase
+            .from('auditorias')
+            .select('*')
+            .eq('empresa', companyName)
+            .order('fecha', { ascending: true });
+
+        if (error) throw error;
+
+        updateEvolutionUI(data);
+
+    } catch (err) {
+        console.error("Error cargando historial:", err);
+        if (tableBody) tableBody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:red;">Error al obtener datos.</td></tr>';
     }
+}
 
-    // Sort by date/timestamp
-    filteredData.sort((a, b) => a.timestamp - b.timestamp);
+function hideHistoryUI() {
+    const tableCard = document.getElementById('history-table-card');
+    if (tableCard) tableCard.style.display = 'none';
+    // Opcional: Limpiar gráfico
+    if (window.evolutionLineChart) {
+        window.evolutionLineChart.destroy();
+    }
+}
 
-    // Update Table
+function updateEvolutionUI(historyData) {
+    // Render Tabla
     const tableBody = document.getElementById('history-table-body');
     if (tableBody) {
-        tableBody.innerHTML = filteredData.map(h => `
+        tableBody.innerHTML = historyData.map(h => {
+            const dateObj = new Date(h.fecha);
+            const formattedDate = dateObj.toLocaleDateString() + ' ' + dateObj.toLocaleTimeString();
+            return `
             <tr>
-                <td>${h.date}</td>
-                <td>${h.companyName}</td>
-                <td>${h.totalScore}</td>
-                <td><button class="option-btn" style="padding:5px 10px; font-size:0.9rem;" onclick="loadAudit(${h.timestamp})">Cargar</button></td>
+                <td>${formattedDate}</td>
+                <td>${h.empresa}</td>
+                <td>${h.puntos}</td>
+                <td>
+                    <button class="option-btn" style="padding:5px 10px; font-size:0.9rem;" onclick="loadAudit(${h.id})">
+                        Cargar
+                    </button>
+                </td>
             </tr>
-        `).join('');
+            `;
+        }).join('');
     }
 
-    // Update Chart
-    renderEvolutionChart(filteredData);
+    // Render Gráfico
+    renderEvolutionChart(historyData);
 }
 
 function renderEvolutionChart(data) {
@@ -1031,8 +1109,8 @@ function renderEvolutionChart(data) {
         window.evolutionLineChart.destroy();
     }
 
-    const labels = data.map(h => `${h.date}`);
-    const scores = data.map(h => h.totalScore);
+    const labels = data.map(h => new Date(h.fecha).toLocaleDateString());
+    const scores = data.map(h => h.puntos);
 
     window.evolutionLineChart = new Chart(ctx, {
         type: 'line',
@@ -1074,25 +1152,42 @@ function renderEvolutionChart(data) {
     });
 }
 
-window.loadAudit = function (timestamp) {
-    const history = JSON.parse(localStorage.getItem('ebcAuditHistory')) || [];
-    const audit = history.find(h => h.timestamp === timestamp);
-    if (audit) {
+// Global scope para que el onclick del HTML funcione
+window.loadAudit = async function (id) {
+    try {
+        // Mostrar feedback visual
+        const btn = event ? event.target : null;
+        if (btn) btn.textContent = "Cargando...";
+
+        const { data, error } = await supabase
+            .from('auditorias')
+            .select('*')
+            .eq('id', id)
+            .single();
+
+        if (error) throw error;
+
+        // Recuperar objeto resultados (JSON)
+        // Nota: en Supabase guardamos el JSON completo en la columna 'resultados'
+        const resultados = data.resultados;
+
         sessionStorage.setItem('active_results', JSON.stringify({
-            company: audit.companyName,
-            score: audit.totalScore,
-            categoryScores: audit.blockScores,
-            recommendations: audit.savedRecommendations
+            company: data.empresa,
+            score: data.puntos,
+            categoryScores: resultados.categoryScores,
+            recommendations: resultados.recommendations,
+            timestamp: new Date(data.fecha).getTime() // Por compatibilidad
         }));
+
         window.location.href = 'resultados.html';
+
+    } catch (err) {
+        console.error("Error cargando auditoría:", err);
+        alert("Error al cargar la auditoría desde la nube.");
+        if (btn) btn.textContent = "Cargar";
     }
 };
 
 window.clearHistory = function () {
-    if (confirm("¿Estás seguro de que quieres borrar todo el historial de auditorías? Esta acción no se puede deshacer.")) {
-        localStorage.removeItem('ebcAuditHistory');
-        sessionStorage.clear();
-        alert("Historial borrado correctamente.");
-        window.location.reload();
-    }
+    alert("Esta funcionalidad ahora se gestiona directamente en la base de datos.");
 };
