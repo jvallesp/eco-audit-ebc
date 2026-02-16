@@ -914,8 +914,15 @@ function renderAccordion(data) {
         "Justicia": 70, "Gobernanza": 50, "Clientes": 30, "Impacto": 30
     };
 
-    // Cleaned up unused individual recommendation mapping to ensure only sector summaries are shown.
-    // Logic for individual tips was removed as requested.
+    const sectorIcons = {
+        "Estrategia": "fa-chess",
+        "Social": "fa-users",
+        "Ecología": "fa-leaf",
+        "Justicia": "fa-scale-balanced",
+        "Gobernanza": "fa-landmark",
+        "Clientes": "fa-user-shield",
+        "Impacto": "fa-globe"
+    };
 
     categories.forEach(cat => {
         const score = data.categoryScores[cat] || 0;
@@ -925,12 +932,12 @@ function renderAccordion(data) {
         let feedbackText = "";
         let statusClass = "";
         let statusLabel = "";
-        let colorHex = "";
+        let colorHex = ""; // Still used for inline styles if needed, but CSS classes handle most
 
         if (percent < 40) {
             feedbackText = sectorFeedback[cat].low;
             statusClass = "recommendation-critical";
-            statusLabel = "CRÍTICO";
+            statusLabel = "ÁREA CRÍTICA";
             colorHex = "#e74c3c";
         } else if (percent < 75) {
             feedbackText = sectorFeedback[cat].mid;
@@ -944,33 +951,89 @@ function renderAccordion(data) {
             colorHex = "#2ecc71";
         }
 
+        // Split Diagnosis vs Action
+        // We assume structure "Text. Acción: Text."
+        const parts = feedbackText.split("Acción:");
+        const diagnosisText = parts[0] ? parts[0].trim() : feedbackText;
+        const actionText = parts.length > 1 ? parts[1].trim() : "Revisa la guía de la Economía del Bien Común para más detalles.";
+
+        // Get details for this sector
+        // userRecommendations has { category, question, answer, points ... }
+        // We need to access global userRecommendations or passed data.
+        // Passed 'data' has 'recommendations' array!
+        // data.recommendations is accurate from loadAudit or finishQuiz
+        const sectorDetails = (data.recommendations || []).filter(r => r.category === cat);
+
+        const detailsHtml = sectorDetails.length > 0
+            ? sectorDetails.map(d => `
+                <div class="detail-item">
+                    <span class="detail-question">${d.question || 'Pregunta no disponible'}</span>
+                    <span class="detail-answer"><i class="fas fa-check-circle" style="color:${colorHex}"></i> ${d.answer || '-'}</span>
+                    <div class="detail-points">Puntos obtenidos: <span class="rec-points-badge">${d.points}</span></div>
+                </div>
+            `).join('')
+            : '<p>No hay respuestas registradas para este sector.</p>';
+
         const card = document.createElement('div');
         card.className = `recommendation-card fade-in ${statusClass}`;
-        card.style.borderLeft = `6px solid ${colorHex}`;
-        card.style.marginBottom = "20px";
-        card.style.padding = "20px";
-        card.style.borderRadius = "8px";
-        card.style.backgroundColor = "#fff";
-        card.style.boxShadow = "0 2px 5px rgba(0,0,0,0.05)";
+        // Border left color is handled by CSS class now, but inline style ensures dynamic color override if needed
+        card.style.borderLeftColor = colorHex;
 
         card.innerHTML = `
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <h3 style="margin:0; color:${colorHex};">${cat}</h3>
-                <span style="font-weight:bold; font-size:1.2rem; color:${colorHex};">${percent}%</span>
+            <div class="rec-header">
+                <div class="rec-title-group">
+                    <div class="rec-icon" style="color:${colorHex}">
+                        <i class="fas ${sectorIcons[cat] || 'fa-info-circle'}"></i>
+                    </div>
+                    <div class="rec-title-text">
+                        <h3>${cat}</h3>
+                        <span class="rec-badge" style="background-color:${colorHex}20; color:${colorHex}">${statusLabel}</span>
+                    </div>
+                </div>
+                <div class="rec-score-circle" style="background-color:${colorHex}">
+                    ${percent}%
+                </div>
             </div>
-            <div style="margin:10px 0;">
-                <span style="display:inline-block; padding:4px 8px; border-radius:4px; background:${colorHex}20; color:${colorHex}; font-weight:bold; font-size:0.8rem;">
-                    ${statusLabel}
-                </span>
+
+            <div class="rec-body">
+                <div class="rec-diagnosis">
+                    <span class="rec-label" style="color:${colorHex}">DIAGNÓSTICO</span>
+                    <p>${diagnosisText}</p>
+                </div>
+                <div class="rec-action-plan" style="border-left-color:${colorHex}">
+                    <span class="rec-label" style="color:${colorHex}">PLAN DE ACCIÓN</span>
+                    <p><strong><i class="fas fa-arrow-right"></i></strong> ${actionText}</p>
+                </div>
             </div>
-            <p style="font-size:1rem; line-height:1.5; color:#333; margin-bottom:15px;">
-                ${feedbackText}
-            </p>
+
+            <div class="rec-footer">
+                <button class="toggle-details-btn" onclick="toggleDetails('details-${cat}')" style="color:${colorHex}">
+                    Ver mis respuestas en este sector <i class="fas fa-chevron-down"></i>
+                </button>
+                <div id="details-${cat}" class="rec-details-content" style="display:none;">
+                    ${detailsHtml}
+                </div>
+            </div>
         `;
 
         container.appendChild(card);
     });
 }
+
+// Global function for accordion toggle
+window.toggleDetails = function (id) {
+    const el = document.getElementById(id);
+    if (el) {
+        const isHidden = el.style.display === "none";
+        el.style.display = isHidden ? "block" : "none";
+        // Rotate icon logic optional
+        const btn = event.currentTarget;
+        const icon = btn.querySelector('.fa-chevron-down') || btn.querySelector('.fa-chevron-up');
+        if (icon) {
+            icon.className = isHidden ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
+        }
+    }
+};
 
 // --- HISTORY & EVOLUTION CHART LOGIC (SUPABASE) ---
 
