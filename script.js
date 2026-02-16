@@ -1,7 +1,7 @@
-﻿
-const SUPABASE_URL = 'https://xdwvoqyausmpioslahwy.supabase.co';
+﻿const SUPABASE_URL = 'https://xdwvoqyausmpioslahwy.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhkd3ZvcXlhdXNtcGlvc2xhaHd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEyNDU2MTgsImV4cCI6MjA4NjgyMTYxOH0.F1pNn98WO-BxhWbxZ0c0VDzoDSlNJFTEe4Adtxykqtw';
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // --- CAROUSEL LOGIC ---
 document.addEventListener('DOMContentLoaded', () => {
@@ -510,33 +510,38 @@ let userRecommendations = [];
 let companyName = "";
 
 document.addEventListener('DOMContentLoaded', () => {
-    const quizContainer = document.getElementById('quiz-container');
-    const resultsContainerCheck = document.querySelector('.charts-grid');
-    const adviceContainerCheck = document.getElementById('advices-container');
+    try {
+        const quizContainer = document.getElementById('quiz-container');
+        const resultsContainerCheck = document.querySelector('.charts-grid');
+        const adviceContainerCheck = document.getElementById('advices-container');
 
-    if (quizContainer) {
-        const prefill = sessionStorage.getItem('prefill_company');
-        if (prefill) {
-            companyName = prefill;
-            sessionStorage.removeItem('prefill_company');
-            currentQuestionIndex = 0;
-            totalScore = 0;
-            userRecommendations = [];
-            renderQuestion();
-        } else {
-            showStartScreen();
+        if (quizContainer) {
+            const prefill = sessionStorage.getItem('prefill_company');
+            if (prefill) {
+                companyName = prefill;
+                sessionStorage.removeItem('prefill_company');
+                currentQuestionIndex = 0;
+                totalScore = 0;
+                userRecommendations = [];
+                renderQuestion();
+            } else {
+                showStartScreen();
+            }
+        } else if (resultsContainerCheck || adviceContainerCheck) {
+            checkAndRenderResults();
         }
-    } else if (resultsContainerCheck || adviceContainerCheck) {
-        checkAndRenderResults();
-    }
 
-    if (document.getElementById('evolutionChart')) {
-        initEvolutionChart();
+        if (document.getElementById('evolutionChart')) {
+            initEvolutionChart();
+        }
+    } catch (e) {
+        console.error("Error in DOMContentLoaded:", e);
     }
 });
 
 function showStartScreen() {
     const quizContainer = document.getElementById('quiz-container');
+    // Saneamiento HTML: asegurar sin espacios en etiquetas
     quizContainer.innerHTML = `
         <div class="quiz-card fade-in" id="start-screen" style="text-align: center;">
             <i class="fas fa-clipboard-check" style="font-size: 4rem; color: #2e7d32; margin-bottom: 1.5rem;"></i>
@@ -556,11 +561,16 @@ function showStartScreen() {
 
 window.beginTest = function () {
     const input = document.getElementById('companyNameInput');
-    if (!input.value.trim()) {
+    if (!input || !input.value.trim()) {
         alert("Por favor, introduce el nombre de la empresa.");
         return;
     }
     companyName = input.value.trim();
+
+    // Ocultar pantalla de inicio
+    const startScreen = document.getElementById('start-screen');
+    if (startScreen) startScreen.style.display = 'none';
+
     currentQuestionIndex = 0;
     totalScore = 0;
     userRecommendations = [];
@@ -575,6 +585,7 @@ function renderQuestion() {
     }
 
     const q = questions[currentQuestionIndex];
+    // Saneamiento HTML: asegurar sin espacios en etiquetas
     quizContainer.innerHTML = `
         <div class="quiz-card fade-in">
             <div class="quiz-header">
@@ -582,9 +593,9 @@ function renderQuestion() {
                 <span class="quiz-counter">Pregunta ${currentQuestionIndex + 1} de ${questions.length}</span>
             </div>
             <h3 class="question-text">${q.question}</h3>
-            <div class="options-container">
+            <div class="options-container" style="display: flex; flex-direction: column; gap: 10px;">
                 ${q.options.map((opt, index) => `
-                    <button class="option-btn" onclick="handleAnswer(${index})">
+                    <button class="option-btn" style="width: 100%; margin-bottom: 10px;" onclick="handleAnswer(${index})">
                         ${opt.text}
                     </button>
                 `).join('')}
@@ -645,13 +656,14 @@ async function finishQuiz() {
     };
 
     try {
-        const { data, error } = await supabase
+        if (!supabaseClient) throw new Error("Supabase client is not initialized.");
+        const { data, error } = await supabaseClient
             .from('auditorias')
             .insert([
                 {
                     empresa: companyName,
-                    puntos: totalScore,
-                    resultados: resultadosJSON,
+                    puntos: Math.round(totalScore),
+                    detalles: resultadosJSON,
                     fecha: new Date().toISOString()
                 },
             ]);
@@ -671,7 +683,7 @@ async function finishQuiz() {
 
     } catch (err) {
         console.error("Error guardando en Supabase:", err);
-        alert("Hubo un error al guardar los datos en la nube. Se guardarán localmente.");
+        alert("Error Supabase: " + (err.message || err) + "\nSe guardarán localmente.");
 
         // Fallback localstorage (opcional, pero buena práctica)
         const historyEntry = {
@@ -902,33 +914,8 @@ function renderAccordion(data) {
         "Justicia": 70, "Gobernanza": 50, "Clientes": 30, "Impacto": 30
     };
 
-    // Group individual questions by category for the details view
-    const detailsGrouped = {};
-    categories.forEach(cat => detailsGrouped[cat] = []);
-
-    // questions is global, we can use it to map answers
-    // We need to match user answers (which we might need to look up in userRecommendations or rebuild)
-    // Actually userRecommendations contains { category, points, text, ... } but maybe not the original question text easily?
-    // Let's rely on userRecommendations which has: {id, category, points, maxPoints, questionText, selectedOption, recommendation}
-    // Wait, let's check what userRecommendations has. In `handleAnswer` we push:
-    // { id: question.id, category: question.block, points: selectedOption.points, selectedOption: selectedOption.text, recommendation: selectedOption.recomendacion }
-    // It does NOT have 'questionText' or 'maxPoints'.
-
-    // Let's map it using the question ID
-    userRecommendations.forEach(rec => {
-        if (rec.category) {
-            const q = questions.find(q => q.id === rec.id);
-            if (q) {
-                if (!detailsGrouped[rec.category]) detailsGrouped[rec.category] = [];
-                detailsGrouped[rec.category].push({
-                    question: q.question,
-                    answer: rec.selectedOption,
-                    points: rec.points,
-                    tip: rec.recommendation
-                });
-            }
-        }
-    });
+    // Cleaned up unused individual recommendation mapping to ensure only sector summaries are shown.
+    // Logic for individual tips was removed as requested.
 
     categories.forEach(cat => {
         const score = data.categoryScores[cat] || 0;
@@ -993,8 +980,9 @@ async function initEvolutionChart() {
     if (!selector) return;
 
     try {
+        if (!supabaseClient) throw new Error("Supabase client is not initialized.");
         // 1. Obtener empresas únicas de Supabase
-        const { data, error } = await supabase
+        const { data, error } = await supabaseClient
             .from('auditorias')
             .select('empresa');
 
@@ -1007,8 +995,21 @@ async function initEvolutionChart() {
 
         if (companies.length === 0) {
             const resultCard = document.querySelector('.card h3').parentNode; // Parent of "Progreso Histórico"
-            if (resultCard) resultCard.innerHTML += '<p>No hay auditorías registradas en la nube.</p>';
+            if (resultCard && !resultCard.innerHTML.includes('No hay auditorías registradas')) {
+                resultCard.innerHTML += '<p>No hay auditorías registradas en la nube.</p>';
+            }
             return;
+        }
+
+        // Mantener la opción "Ver todas" y añadir las empresas
+        selector.innerHTML = '<option value="all">Ver todas</option>';
+
+        if (companies.length === 0) {
+            const resultCard = document.querySelector('.card h3').parentNode;
+            if (resultCard && !resultCard.innerHTML.includes('No hay auditorías registradas')) {
+                resultCard.innerHTML += '<p>No hay auditorías registradas en la nube.</p>';
+            }
+            // Aún así permitimos 'all' para limpiar la UI si no hay nada
         }
 
         companies.forEach(company => {
@@ -1021,18 +1022,19 @@ async function initEvolutionChart() {
         // 2. Event Listener para cargar historial
         selector.addEventListener('change', async (e) => {
             const company = e.target.value;
-            if (company) {
-                await loadCompanyHistory(company);
-            } else {
-                hideHistoryUI();
-            }
+            // Siempre cargamos historial, ya sea filtrado o todo ('all')
+            await loadCompanyHistory(company);
         });
 
-        // Pre-seleccionar si venimos de guardar un resultado
+        // Pre-seleccionar si venimos de guardar un resultado, si no, cargar todo por defecto
         const activeData = JSON.parse(sessionStorage.getItem('active_results'));
         if (activeData && activeData.company && companies.includes(activeData.company)) {
             selector.value = activeData.company;
             await loadCompanyHistory(activeData.company);
+        } else {
+            // Cargar todo por defecto si no hay selección previa
+            selector.value = 'all';
+            await loadCompanyHistory('all');
         }
 
     } catch (err) {
@@ -1050,11 +1052,19 @@ async function loadCompanyHistory(companyName) {
     if (tableCard) tableCard.style.display = 'block';
 
     try {
-        const { data, error } = await supabase
+        if (!supabaseClient) throw new Error("Supabase client is not initialized.");
+
+        let query = supabaseClient
             .from('auditorias')
             .select('*')
-            .eq('empresa', companyName)
             .order('fecha', { ascending: true });
+
+        // Si es 'all' o vacío, traemos todo. Si tiene nombre, filtramos.
+        if (companyName && companyName !== 'all') {
+            query = query.eq('empresa', companyName);
+        }
+
+        const { data, error } = await query;
 
         if (error) throw error;
 
@@ -1154,12 +1164,15 @@ function renderEvolutionChart(data) {
 
 // Global scope para que el onclick del HTML funcione
 window.loadAudit = async function (id) {
+    let btn = null;
     try {
         // Mostrar feedback visual
-        const btn = event ? event.target : null;
+        btn = window.event ? window.event.target : null;
         if (btn) btn.textContent = "Cargando...";
 
-        const { data, error } = await supabase
+        if (!supabaseClient) throw new Error("Supabase client is not initialized.");
+
+        const { data, error } = await supabaseClient
             .from('auditorias')
             .select('*')
             .eq('id', id)
@@ -1168,8 +1181,12 @@ window.loadAudit = async function (id) {
         if (error) throw error;
 
         // Recuperar objeto resultados (JSON)
-        // Nota: en Supabase guardamos el JSON completo en la columna 'resultados'
-        const resultados = data.resultados;
+        // Intentamos leer 'detalles' (nuevo formato) o 'resultados' (viejo formato)
+        const resultados = data.detalles || data.resultados;
+
+        if (!resultados || !resultados.categoryScores) {
+            throw new Error("Datos de auditoría corruptos o incompletos.");
+        }
 
         sessionStorage.setItem('active_results', JSON.stringify({
             company: data.empresa,
@@ -1183,11 +1200,40 @@ window.loadAudit = async function (id) {
 
     } catch (err) {
         console.error("Error cargando auditoría:", err);
-        alert("Error al cargar la auditoría desde la nube.");
+        alert("Error al cargar la auditoría desde la nube: " + (err.message || err));
         if (btn) btn.textContent = "Cargar";
     }
 };
 
-window.clearHistory = function () {
-    alert("Esta funcionalidad ahora se gestiona directamente en la base de datos.");
+window.clearHistory = async function () {
+    if (!confirm("⚠️ ¿Estás seguro de que quieres BORRAR TODO el historial de auditorías?\n\nEsta acción eliminará permanentemente todos los datos de la nube y del dispositivo. No se puede deshacer.")) {
+        return;
+    }
+
+    const btn = window.event ? window.event.target : null;
+    if (btn) btn.textContent = "Borrando...";
+
+    try {
+        if (!supabaseClient) throw new Error("Supabase client is not initialized.");
+
+        // Borrar todo de Supabase (usamos neq id 0 como truco para seleccionar todo)
+        const { error } = await supabaseClient
+            .from('auditorias')
+            .delete()
+            .neq('id', 0);
+
+        if (error) throw error;
+
+        // Borrar local
+        localStorage.removeItem('ebcAuditHistory');
+        sessionStorage.removeItem('active_results');
+
+        alert("Historial borrado correctamente.");
+        window.location.reload();
+
+    } catch (err) {
+        console.error("Error borrando historial:", err);
+        alert("Error al borrar el historial: " + (err.message || err));
+        if (btn) btn.textContent = "Borrar todo el historial";
+    }
 };
