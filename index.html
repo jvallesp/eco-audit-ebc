@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eco-Audit | Consultoría EBC</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="app-container">
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h2>Eco-Audit</h2>
+                <p>Consultoría de Sostenibilidad</p>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html" class="active"><i class="fas fa-home"></i> Inicio</a>
+                </li>
+                <li><a href="auditoria.html"><i class="fas fa-clipboard-list"></i> Auditoría
+                        EBC</a></li>
+                <li><a href="resultados.html"><i class="fas fa-chart-pie"></i> Informe de
+                        Impacto</a></li>
+                <li><a href="recomendaciones.html"><i class="fas fa-lightbulb"></i>
+                        Recomendaciones</a></li>
+                <li><a href="evolucion.html"><i class="fas fa-chart-line"></i> Evolución</a></li>
+            </ul>
+            <div class="sidebar-footer">
+                <p>Reto 3 - FCT 2026</p>
+            </div>
+        </nav>
+
+        <button class="menu-toggle" id="menuToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <main class="content">
+            <section id="inicio" class="tab-content active">
+                <h1>Inicio</h1>
+                <p>Esta herramienta evalúa a tu PYME bajo los estándares de la <strong>Economía del Bien Común
+                        (EBC)</strong>.</p>
+                <div class="card">
+                    <h3>¿Cómo empezar?</h3>
+                    <p>Utiliza el menú de la izquierda para navegar. Te recomendamos comenzar por la sección de
+                        <strong>Auditoría</strong>.
+                    </p>
+                </div>
+
+                <div class="middle-content">
+                    <h2 class="section-title">Casos de Éxito en Sostenibilidad</h2>
+                    <div class="success-grid">
+                        <!-- VAUDE -->
+                        <div class="success-card">
+                            <div class="card-icon"><i class="fas fa-mountain"></i></div>
+                            <h3>VAUDE</h3>
+                            <span class="sector">Textil/Outdoor</span>
+                            <div class="company-country">Alemania</div>
+                            <p class="impact-text">Referente mundial en sostenibilidad. Han demostrado que se puede ser
+                                líder
+                                en ventas usando materiales 100% bio-basados y reparables.</p>
+                        </div>
+
+                        <!-- Cartonajes La Plana -->
+                        <div class="success-card">
+                            <div class="card-icon"><i class="fas fa-box-open"></i></div>
+                            <h3>Cartonajes La Plana</h3>
+                            <span class="sector">Packaging/Industria</span>
+                            <div class="company-country">España</div>
+                            <p class="impact-text">Una de las empresas españolas más grandes en hacer el Balance del
+                                Bien Común,
+                                enfocada en reducción de plásticos y empleo local.</p>
+                        </div>
+
+                        <!-- Sparda-Bank München -->
+                        <div class="success-card">
+                            <div class="card-icon"><i class="fas fa-university"></i></div>
+                            <h3>Sparda-Bank München</h3>
+                            <span class="sector">Finanzas</span>
+                            <div class="company-country">Alemania</div>
+                            <p class="impact-text">Primer banco en auditarse con la EBC. No invierten en armas ni
+                                especulación,
+                                solo en economía real y proyectos sociales.</p>
+                        </div>
+
+                        <!-- Ecoalf -->
+                        <div class="success-card">
+                            <div class="card-icon"><i class="fas fa-tshirt"></i></div>
+                            <h3>Ecoalf</h3>
+                            <span class="sector">Moda</span>
+                            <div class="company-country">España</div>
+                            <p class="impact-text">"Because there is no planet B". Famosos por limpiar el fondo del mar
+                                para
+                                fabricar sus tejidos (Economía Circular).</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="carousel-container" id="bottomCarousel">
+                    <div class="carousel-track">
+                        <!-- SLIDE 1: Puntos EBC -->
+                        <div class="carousel-slide">
+                            <div class="ebc-pillars-section">
+                                <h2>Los 5 Pilares de la Matriz del Bien Común</h2>
+                                <div class="pillars-grid">
+                                    <div class="pillar-card">
+                                        <i class="fas fa-hand-holding-heart"></i>
+                                        <h4>Dignidad Humana</h4>
+                                    </div>
+                                    <div class="pillar-card">
+                                        <i class="fas fa-users"></i>
+                                        <h4>Solidaridad</h4>
+                                    </div>
+                                    <div class="pillar-card">
+                                        <i class="fas fa-leaf"></i>
+                                        <h4>Sostenibilidad Ecológica</h4>
+                                    </div>
+                                    <div class="pillar-card">
+                                        <i class="fas fa-balance-scale"></i>
+                                        <h4>Justicia Social</h4>
+                                    </div>
+                                    <div class="pillar-card">
+                                        <i class="fas fa-vote-yea"></i>
+                                        <h4>Democracia</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SLIDE 2: Beneficios -->
+                        <div class="carousel-slide">
+                            <div class="ebc-pillars-section">
+                                <h2 class="benefit-title">¿Por qué implementar un plan de sostenibilidad?</h2>
+                                <div class="pillars-grid">
+                                    <div class="pillar-card benefit-card">
+                                        <i class="fas fa-trophy"></i>
+                                        <h4>Ventajas Competitivas</h4>
+                                    </div>
+                                    <div class="pillar-card benefit-card">
+                                        <i class="fas fa-piggy-bank"></i>
+                                        <h4>Ahorro de Costes</h4>
+                                    </div>
+                                    <div class="pillar-card benefit-card">
+                                        <i class="fas fa-gavel"></i>
+                                        <h4>Cumplimiento Legal</h4>
+                                    </div>
+                                    <div class="pillar-card benefit-card">
+                                        <i class="fas fa-id-card-alt"></i>
+                                        <h4>Imagen Interna</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SLIDE 3: Matriz del Bien Común -->
+                        <div class="carousel-slide">
+                            <div class="ebc-pillars-section">
+                                <h2 class="matrix-title">Matriz del Bien Común</h2>
+                                <div class="pillars-grid">
+                                    <div class="pillar-card matrix-card">
+                                        <i class="fas fa-heart"></i>
+                                        <h4>Dignidad humana</h4>
+                                    </div>
+                                    <div class="pillar-card matrix-card">
+                                        <i class="fas fa-hands-helping"></i>
+                                        <h4>Solidaridad y justicia</h4>
+                                    </div>
+                                    <div class="pillar-card matrix-card">
+                                        <i class="fas fa-globe-americas"></i>
+                                        <h4>Sostenibilidad medioambiental</h4>
+                                    </div>
+                                    <div class="pillar-card matrix-card">
+                                        <i class="fas fa-bullhorn"></i>
+                                        <h4>Transparencia y participación</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,172 @@
+/* --- Refined Accordion Styles --- */
+.accordion-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.accordion-item {
+    background-color: white;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    border: 1px solid #eee;
+    transition: box-shadow 0.3s ease;
+}
+
+.accordion-item:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+.accordion-header {
+    width: 100%;
+    background-color: #fff;
+    padding: 1.2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, border-left-color 0.3s ease;
+    border-left: 6px solid transparent;
+}
+
+/* Status Colors for Header */
+.accordion-header.status-excellent {
+    border-left-color: #2ecc71;
+}
+
+.accordion-header.status-average {
+    border-left-color: #f39c12;
+}
+
+.accordion-header.status-critical {
+    border-left-color: #e74c3c;
+    background-color: #fff5f5;
+    /* Light red bg for critical headers */
+}
+
+.accordion-header:hover {
+    background-color: #f8f9fa;
+}
+
+.accordion-header.status-critical:hover {
+    background-color: #fee;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.block-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--dark-green);
+}
+
+.score-badge {
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.accordion-icon {
+    font-size: 1rem;
+    color: #95a5a6;
+    transition: transform 0.3s ease;
+}
+
+.accordion-header.active .accordion-icon {
+    transform: rotate(180deg);
+}
+
+.accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-out;
+    background-color: #fdfdfd;
+}
+
+.accordion-body-padding {
+    padding: 1.5rem;
+    border-top: 1px solid #eee;
+}
+
+/* --- Inline Critical Alert --- */
+.inline-critical-alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    background-color: #fff5f5;
+    border: 1px solid #fadbd8;
+    border-left: 4px solid #e74c3c;
+    padding: 1rem;
+    border-radius: 6px;
+    margin-bottom: 1.5rem;
+}
+
+.alert-icon-inline {
+    font-size: 1.5rem;
+    color: #c0392b;
+    margin-top: 0.2rem;
+}
+
+.alert-content-inline h4 {
+    margin: 0 0 0.5rem 0;
+    color: #c0392b;
+    font-size: 1rem;
+}
+
+.alert-content-inline p {
+    margin: 0 0 0.5rem 0;
+    font-size: 0.95rem;
+    color: #333;
+}
+
+.alert-action-inline {
+    font-size: 0.9rem;
+    color: #c0392b;
+    background: rgba(231, 76, 60, 0.1);
+    padding: 0.5rem;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+/* --- Recommendation Items Refined --- */
+.rec-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.8rem;
+    font-size: 0.9rem;
+    background: #f8f9fa;
+    padding: 0.5rem 0.8rem;
+    border-radius: 6px;
+}
+
+.rec-answer {
+    margin: 0;
+    color: #2c3e50;
+}
+
+.rec-points-badge {
+    font-weight: 700;
+}
+
+.rec-feedback-box {
+    display: flex;
+    gap: 0.8rem;
+    align-items: flex-start;
+    font-size: 0.95rem;
+    color: #555;
+    line-height: 1.5;
+    background: #fff;
+    padding: 0.5rem;
+}

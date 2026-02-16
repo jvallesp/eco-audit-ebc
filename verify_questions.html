@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verification Script</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+        }
+
+        .pass {
+            color: green;
+        }
+
+        .fail {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Verification Results</h1>
+    <div id="results"></div>
+
+    <!-- Mock DOM elements required by script.js -->
+    <div id="quiz-container"></div>
+    <div class="charts-grid"></div>
+    <div id="advices-container"></div>
+    <canvas id="radarChart"></canvas>
+
+    <script src="script.js"></script>
+    <script>
+        const log = (msg, status) => {
+            const div = document.createElement('div');
+            div.textContent = msg;
+            div.className = status;
+            document.getElementById('results').appendChild(div);
+        };
+
+        const expectedBlocks = [
+            "Estrategia",
+            "Dignidad Humana",
+            "Green IT / Eco",
+            "Justicia / Prov",
+            "Transparencia",
+            "Clientes / Social",
+            "Residuos / HW"
+        ];
+
+        // Test 1: Question Count
+        if (quizQuestions.length === 43) {
+            log(`[PASS] Total Questions: ${quizQuestions.length}`, 'pass');
+        } else {
+            log(`[FAIL] Total Questions: ${quizQuestions.length} (Expected 43)`, 'fail');
+        }
+
+        // Test 2: Block Mapping
+        let blockCounts = {};
+        let mappingError = false;
+
+        quizQuestions.forEach((q, index) => {
+            if (!expectedBlocks.includes(q.block)) {
+                log(`[FAIL] Q${index + 1} (ID ${q.id}) has invalid block: "${q.block}"`, 'fail');
+                mappingError = true;
+            }
+            blockCounts[q.block] = (blockCounts[q.block] || 0) + 1;
+        });
+
+        if (!mappingError) {
+            log(`[PASS] All questions have valid blocks.`, 'pass');
+        }
+
+        // Test 3: Block Counts & Max Score
+        let calculatedMaxScore = 0;
+        console.log("Block Counts:", blockCounts);
+
+        for (const [block, count] of Object.entries(blockCounts)) {
+            const expectedScore = count * 10;
+            calculatedMaxScore += expectedScore;
+            log(`Block "${block}": ${count} questions -> ${expectedScore} pts`, 'pass');
+        }
+
+        if (calculatedMaxScore === 430) {
+            log(`[PASS] Total Calculated Max Score: ${calculatedMaxScore}`, 'pass');
+        } else {
+            log(`[FAIL] Total Calculated Max Score: ${calculatedMaxScore} (Expected 430)`, 'fail');
+        }
+
+        // Test 4: Check if logic defines strict max scores
+        // Note: We can't access blockMaxScores variable inside functions, but we can verify charts logic if we could run it.
+        // For now, static analysis was done via reading the file.
+
+    </script>
+</body>
+
+</html>

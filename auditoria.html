@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auditoría | Eco-Audit</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="app-container">
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h2>Eco-Audit</h2>
+                <p>Consultoría de Sostenibilidad</p>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html"><i class="fas fa-home"></i> Inicio</a></li>
+                <li><a href="auditoria.html" class="active"><i class="fas fa-clipboard-list"></i> Auditoría EBC</a></li>
+                <li><a href="resultados.html"><i class="fas fa-chart-pie"></i> Informe de Impacto</a></li>
+                <li><a href="recomendaciones.html"><i class="fas fa-lightbulb"></i> Recomendaciones</a></li>
+                <li><a href="evolucion.html"><i class="fas fa-chart-line"></i> Evolución</a></li>
+            </ul>
+            <div class="sidebar-footer">
+                <p>Reto 3 - FCT 2026</p>
+            </div>
+        </nav>
+
+        <button class="menu-toggle" id="menuToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <main class="content">
+            <section id="auditoria" class="tab-content active">
+                <h1>Auditoría EBC</h1>
+                <div id="quiz-container">
+                    <p>Cargando preguntas de sostenibilidad...</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

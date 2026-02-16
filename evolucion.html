@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evolución | Eco-Audit</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+    <div class="app-container">
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h2>Eco-Audit</h2>
+                <p>Consultoría de Sostenibilidad</p>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html"><i class="fas fa-home"></i> Inicio</a></li>
+                <li><a href="auditoria.html"><i class="fas fa-clipboard-list"></i> Auditoría EBC</a></li>
+                <li><a href="resultados.html"><i class="fas fa-chart-pie"></i> Informe de Impacto</a></li>
+                <li><a href="recomendaciones.html"><i class="fas fa-lightbulb"></i> Recomendaciones</a></li>
+                <li><a href="evolucion.html" class="active"><i class="fas fa-chart-line"></i> Evolución</a></li>
+            </ul>
+            <div class="sidebar-footer">
+                <p>Reto 3 - FCT 2026</p>
+            </div>
+        </nav>
+
+        <button class="menu-toggle" id="menuToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <main class="content">
+            <section id="evolucion" class="tab-content active">
+                <h1>Evolución del Desempeño</h1>
+                <p>Seguimiento histórico de tus puntuaciones en el Balance del Bien Común.</p>
+
+                <div class="card">
+                    <h3>Progreso Histórico</h3>
+
+                    <div style="margin-bottom: 20px;">
+                        <label for="companySelector" style="font-weight: bold; margin-right: 10px;">Filtrar por
+                            Empresa:</label>
+                        <select id="companySelector" class="form-input"
+                            style="width: auto; padding: 8px; display: inline-block;">
+                            <option value="all">Ver todas</option>
+                        </select>
+                    </div>
+
+                    <div style="position: relative; height: 400px; width: 100%;">
+                        <canvas id="evolutionChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card" id="history-table-card" style="display: none;">
+                    <h3>Historial de Auditorías</h3>
+                    <div class="table-container" style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+                            <thead>
+                                <tr style="background-color: #f8f9fa; text-align: left;">
+                                    <th style="padding: 12px; border-bottom: 2px solid #ddd;">Fecha</th>
+                                    <th style="padding: 12px; border-bottom: 2px solid #ddd;">Empresa</th>
+                                    <th style="padding: 12px; border-bottom: 2px solid #ddd;">Puntuación</th>
+                                    <th style="padding: 12px; border-bottom: 2px solid #ddd;">Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="history-table-body">
+                                <!-- Filas generadas dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card" style="text-align: center; border: none; background: transparent; box-shadow: none;">
+                    <a href="auditoria.html" class="option-btn primary-btn"
+                        style="display: inline-block; margin: 0 auto; text-decoration: none; width: auto;">
+                        <i class="fas fa-plus"></i> Realizar Nueva Auditoría
+                    </a>
+                    <br><br>
+                    <button onclick="clearHistory()"
+                        style="background:none; border:none; color:#e74c3c; cursor:pointer; text-decoration:underline; font-size:0.9rem;">
+                        <i class="fas fa-trash"></i> Borrar todo el historial
+                    </button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Init chart on load
+        document.addEventListener('DOMContentLoaded', () => {
+            // We'll add a function in script.js to handle this, or do it inline here if script.js is too big.
+            // Best to keep standard in script.js, but for specific page logic, `initEvolutionChart` in script.js is better.
+            if (typeof initEvolutionChart === 'function') {
+                initEvolutionChart();
+            }
+        });
+    </script>
+</body>
+
+</html>

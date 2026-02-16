@@ -1,0 +1,926 @@
+/* --- Variables & Theme --- */
+:root {
+    /* Green Palette */
+    --primary-green: #2ecc71;
+    /* Vibrant green for accents/buttons */
+    --dark-green: #1e8449;
+    /* Darker green for hover states */
+    --sidebar-bg: #89b399;
+    /* Deep forest green for sidebar */
+    --bg-color: #d5f5e3;
+    /* Light green background */
+    --text-color: #2c3e50;
+    /* Dark slate for text */
+    --text-light: #ecf0f1;
+    /* Light text for dark backgrounds */
+    --card-bg: #ffffff;
+    /* White for cards */
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+    /* Dimensions */
+    --sidebar-width: 260px;
+}
+
+/* --- Reset & Global --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    overflow-x: hidden;
+    /* Prevent horizontal scroll from layout shifts */
+}
+
+/* --- Layout Structure --- */
+.app-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* --- Sidebar --- */
+.sidebar {
+    width: var(--sidebar-width);
+    background-color: var(--sidebar-bg);
+    color: var(--text-light);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    /* Fixed sidebar */
+    top: 0;
+    left: 0;
+    height: 100vh;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.sidebar-header {
+    padding: 2rem;
+    background-color: rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.sidebar-header h2 {
+    margin-bottom: 0.5rem;
+    font-size: 1.5rem;
+}
+
+.sidebar-header p {
+    font-size: 0.85rem;
+    opacity: 0.8;
+}
+
+.nav-links {
+    list-style: none;
+    flex: 1;
+    padding-top: 1rem;
+}
+
+.nav-links li a {
+    display: flex;
+    align-items: center;
+    padding: 1rem 2rem;
+    color: var(--text-light);
+    text-decoration: none;
+    transition: background 0.3s;
+}
+
+.nav-links li a:hover,
+.nav-links li a.active {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-left: 4px solid var(--primary-green);
+}
+
+.nav-links li a i {
+    margin-right: 1rem;
+    width: 20px;
+    text-align: center;
+}
+
+.sidebar-footer {
+    padding: 1.5rem;
+    text-align: center;
+    font-size: 0.8rem;
+    opacity: 0.6;
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* --- Main Content --- */
+.content {
+    margin-left: var(--sidebar-width);
+    /* Push content to right */
+    flex: 1;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* Center content horizontally */
+    width: calc(100% - var(--sidebar-width));
+}
+
+section.tab-content {
+    width: 100%;
+    max-width: 1200px;
+    /* Limit width for readability */
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+h1 {
+    color: var(--sidebar-bg);
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+/* --- Cards & General UI --- */
+.card {
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    margin-bottom: 2rem;
+    border-top: 4px solid var(--primary-green);
+}
+
+/* --- Bottom Carousel --- */
+.carousel-container {
+    width: 90%;
+    max-width: 900px;
+    margin: 0 auto;
+    margin-top: auto;
+    /* Empuja el panel al final del contenedor flex */
+    padding-top: 40px;
+    padding-bottom: 20px;
+    overflow: hidden;
+    /* Mask off-screen slides */
+    position: relative;
+}
+
+/* Ensure #inicio has flex layout to push carousel down if content is short */
+#inicio {
+    display: flex;
+    /* Override block for flex column layout if active */
+    flex-direction: column;
+    min-height: calc(100vh - 4rem);
+    /* Full height minus padding */
+}
+
+/* But wait, .tab-content needs to be display:block/none toggle. 
+   Let's just use normal flow for now, the carousel is at the bottom of the HTML in that section.
+*/
+#inicio.active {
+    display: flex;
+    flex-direction: column;
+}
+
+.carousel-track {
+    display: flex;
+    /* overflow-x: auto; STOP MANUAL SCROLL to allow JS transform to work cleanly */
+    transition: transform 0.5s ease-in-out;
+    width: 100%;
+}
+
+.carousel-track::-webkit-scrollbar {
+    height: 8px;
+}
+
+.carousel-track::-webkit-scrollbar-thumb {
+    background-color: var(--sidebar-bg);
+    border-radius: 4px;
+}
+
+.carousel-slide {
+    min-width: 100%;
+    /* Full width of container */
+    flex-shrink: 0;
+    scroll-snap-align: start;
+}
+
+/* Pillars / Grid in Carousel */
+.ebc-pillars-section {
+    text-align: center;
+}
+
+.ebc-pillars-section h2 {
+    font-size: 1.5rem;
+    color: var(--dark-green);
+    margin-bottom: 1.5rem;
+}
+
+/* 3. GRID PARA QUE QUEPAN 5 O 6 CUADRADOS */
+.pillars-grid {
+    display: grid;
+    /* Reducimos el minmax a 120px para que quepan más en una fila */
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+    width: 100%;
+    padding: 10px;
+    justify-content: center;
+    /* Center items if they don't fill row */
+}
+
+.pillar-card {
+    background: white;
+    padding: 1rem;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.pillar-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    border-color: var(--primary-green);
+}
+
+.pillar-card i {
+    font-size: 2.5rem;
+    color: var(--primary-green);
+    margin-bottom: 1rem;
+}
+
+.pillar-card h4 {
+    color: var(--text-color);
+    font-weight: 600;
+}
+
+/* --- Responsive Adjustments --- */
+.menu-toggle {
+    display: none;
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 1001;
+    /* Above sidebar */
+    background: var(--primary-green);
+    color: white;
+    border: none;
+    padding: 0.8rem;
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.menu-toggle:hover {
+    background: var(--dark-green);
+}
+
+@media (max-width: 768px) {
+    :root {
+        --sidebar-width: 0px;
+    }
+
+    .menu-toggle {
+        display: block;
+    }
+
+    .sidebar {
+        transform: translateX(-100%);
+        width: 260px;
+        transition: transform 0.3s ease;
+    }
+
+    .sidebar.open,
+    .sidebar.active {
+        transform: translateX(0);
+    }
+
+    /* Overlay when sidebar is open */
+    .sidebar.active+.content::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+    }
+
+    .content {
+        margin-left: 0;
+        width: 100%;
+        padding: 4rem 1rem 1rem 1rem;
+        /* Top padding for toggle button */
+    }
+
+    .pillars-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* --- Casos de Éxito Section --- */
+.success-grid {
+    display: grid;
+    /* Fit as many as possible, min width 240px */
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    width: 100%;
+    padding: 10px;
+    justify-content: center;
+    /* Center items if they don't fill row */
+}
+
+.success-card {
+    background: white;
+    padding: 25px 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    /* Soft shadow */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-align: center;
+    border-top: 5px solid var(--primary-green);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.success-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: var(--primary-green);
+}
+
+.success-card:hover {
+    transform: translateY(-8px);
+    /* Lift effect */
+    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.1);
+    /* Deeper shadow on hover */
+}
+
+.success-card .card-icon {
+    font-size: 2.5rem;
+    color: var(--primary-green);
+    margin-bottom: 15px;
+    background: rgba(46, 204, 113, 0.1);
+    /* Light green circle bg */
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.success-card h3 {
+    margin: 10px 0 5px;
+    color: var(--dark-green);
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.success-card .sector {
+    font-size: 0.85rem;
+    color: #7f8c8d;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.success-card .company-country {
+    font-size: 0.8rem;
+    color: #95a5a6;
+    margin-bottom: 15px;
+    font-style: italic;
+}
+
+.success-card .impact-text {
+    font-size: 0.9rem;
+    color: var(--text-color);
+    line-height: 1.5;
+}
+
+/* Middle Content (Success Stories) Centering */
+.middle-content {
+    flex-grow: 1;
+    /* Takes up remaining vertical space */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* Centers vertically */
+    width: 100%;
+    margin: 2rem 0;
+}
+
+.section-title {
+    text-align: center;
+    color: var(--dark-green);
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+}
+
+/* --- Quiz Styles --- */
+.quiz-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    max-width: 800px;
+    margin: 0 auto;
+    animation: fadeIn 0.5s ease;
+}
+
+.quiz-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 1rem;
+    color: #7f8c8d;
+    font-size: 0.9rem;
+}
+
+.quiz-block-label {
+    font-weight: 700;
+    color: var(--primary-green);
+    text-transform: uppercase;
+}
+
+.quiz-question {
+    font-size: 1.3rem;
+    color: var(--text-color);
+    margin-bottom: 2rem;
+    line-height: 1.4;
+}
+
+.quiz-options,
+.options-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
+
+.option-btn {
+    background: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    padding: 1rem 1.5rem;
+    text-align: left;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    color: var(--text-color);
+}
+
+.option-btn:hover {
+    background: var(--bg-color);
+    border-color: var(--primary-green);
+    transform: translateX(5px);
+}
+
+/* --- Results Styles --- */
+.results-report {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.score-card {
+    padding: 3rem;
+    border-radius: 15px;
+    text-align: center;
+    color: white;
+    margin-bottom: 2rem;
+}
+
+.score-card.score-low {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+}
+
+.score-card.score-mid {
+    background: linear-gradient(135deg, #f1c40f, #f39c12);
+}
+
+.score-card.score-high {
+    background: linear-gradient(135deg, #2ecc71, #27ae60);
+}
+
+.final-score {
+    font-size: 4rem;
+    font-weight: 800;
+    margin: 1rem 0;
+}
+
+.score-percentage {
+    font-size: 1.2rem;
+    opacity: 0.9;
+}
+
+.recommendations-list {
+    display: grid;
+    gap: 1.5rem;
+    text-align: left;
+}
+
+.recommendation-item {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    border-left: 4px solid transparent;
+}
+
+.recommendation-item:has(.good) {
+    border-left-color: #2ecc71;
+}
+
+.recommendation-item:has(.avg) {
+    border-left-color: #f1c40f;
+}
+
+.recommendation-item:has(.bad) {
+    border-left-color: #e74c3c;
+}
+
+.rec-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+    color: #95a5a6;
+}
+
+.rec-points {
+    font-weight: bold;
+}
+
+.rec-points.good {
+    color: #27ae60;
+}
+
+.rec-points.avg {
+    color: #f39c12;
+}
+
+.rec-points.bad {
+    color: #c0392b;
+}
+
+.rec-question {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.rec-answer {
+    font-size: 0.9rem;
+    color: #34495e;
+    margin-bottom: 0.8rem;
+    background: #f8f9fa;
+    padding: 0.5rem;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+.rec-feedback {
+    color: var(--dark-green);
+    font-style: italic;
+}
+
+.restart-btn {
+    display: block;
+    width: 100%;
+    padding: 1rem;
+    margin-top: 2rem;
+    background: var(--sidebar-bg);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.restart-btn:hover {
+    background: var(--dark-green);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* --- Input Styles --- */
+.form-input {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.1rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.form-input:focus {
+    border-color: var(--primary-green);
+}
+
+.primary-btn {
+    background: var(--primary-green);
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.primary-btn:hover {
+    background: var(--dark-green);
+    transform: translateY(-2px);
+    color: white;
+}
+
+/* --- Alert Grid Styles --- */
+.alert-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+.alert-item {
+    background: #fff5f5;
+    border: 2px solid #e74c3c;
+    border-radius: 12px;
+    padding: 1.5rem;
+    width: 200px;
+    text-align: center;
+    position: relative;
+    cursor: help;
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.alert-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+}
+
+.alert-icon {
+    font-size: 3rem;
+    color: #e74c3c;
+    margin-bottom: 0.5rem;
+}
+
+.alert-title {
+    font-weight: 700;
+    color: #c0392b;
+    font-size: 0.9rem;
+    line-height: 1.2;
+}
+
+.alert-percentage {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #e74c3c;
+    margin-top: 0.5rem;
+}
+
+/* Tooltip */
+.alert-item .tooltip-text {
+    visibility: hidden;
+    width: 280px;
+    background-color: #333;
+    color: #fff;
+    text-align: left;
+    border-radius: 6px;
+    padding: 15px;
+    position: absolute;
+    z-index: 10;
+    bottom: 110%;
+    /* Show above */
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 0.85rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    pointer-events: none;
+}
+
+.alert-item .tooltip-text::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #333 transparent transparent transparent;
+}
+
+.alert-item:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* --- Refined Accordion Styles --- */
+.accordion-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.accordion-item {
+    background-color: white;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    border: 1px solid #eee;
+    transition: box-shadow 0.3s ease;
+}
+
+.accordion-item:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+.accordion-header {
+    width: 100%;
+    background-color: #fff;
+    padding: 1.2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, border-left-color 0.3s ease;
+    border-left: 6px solid transparent;
+}
+
+/* Status Colors for Header */
+.accordion-header.status-excellent {
+    border-left-color: #2ecc71;
+}
+
+.accordion-header.status-average {
+    border-left-color: #f39c12;
+}
+
+.accordion-header.status-critical {
+    border-left-color: #e74c3c;
+    background-color: #fff5f5;
+    /* Light red bg for critical headers */
+}
+
+.accordion-header:hover {
+    background-color: #f8f9fa;
+}
+
+.accordion-header.status-critical:hover {
+    background-color: #fee;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.block-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--dark-green);
+}
+
+.score-badge {
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.accordion-icon {
+    font-size: 1rem;
+    color: #95a5a6;
+    transition: transform 0.3s ease;
+}
+
+.accordion-header.active .accordion-icon {
+    transform: rotate(180deg);
+}
+
+.accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-out;
+    background-color: #fdfdfd;
+}
+
+.accordion-body-padding {
+    padding: 1.5rem;
+    border-top: 1px solid #eee;
+}
+
+/* --- Inline Critical Alert --- */
+.inline-critical-alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    background-color: #fff5f5;
+    border: 1px solid #fadbd8;
+    border-left: 4px solid #e74c3c;
+    padding: 1rem;
+    border-radius: 6px;
+    margin-bottom: 1.5rem;
+}
+
+.alert-icon-inline {
+    font-size: 1.5rem;
+    color: #c0392b;
+    margin-top: 0.2rem;
+}
+
+.alert-content-inline h4 {
+    margin: 0 0 0.5rem 0;
+    color: #c0392b;
+    font-size: 1rem;
+}
+
+.alert-content-inline p {
+    margin: 0 0 0.5rem 0;
+    font-size: 0.95rem;
+    color: #333;
+}
+
+.alert-action-inline {
+    font-size: 0.9rem;
+    color: #c0392b;
+    background: rgba(231, 76, 60, 0.1);
+    padding: 0.5rem;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+/* --- Recommendation Items Refined --- */
+.rec-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.8rem;
+    font-size: 0.9rem;
+    background: #f8f9fa;
+    padding: 0.5rem 0.8rem;
+    border-radius: 6px;
+}
+
+.rec-answer {
+    margin: 0;
+    color: #2c3e50;
+}
+
+.rec-points-badge {
+    font-weight: 700;
+}
+
+.rec-feedback-box {
+    display: flex;
+    gap: 0.8rem;
+    align-items: flex-start;
+    font-size: 0.95rem;
+    color: #555;
+    line-height: 1.5;
+    background: #fff;
+    padding: 0.5rem;
+}
