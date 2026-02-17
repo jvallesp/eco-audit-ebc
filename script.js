@@ -64,442 +64,519 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // --- EBC AUDIT QUIZ LOGIC ---
 
+// Configuración Global
+const CRITICAL_PENALTY = 50; // Changed to 50 as per Executive Request
+let ethicalRisk = false;
+let companyName = "Verdnatura"; // Hardcoded for Verdnatura
+
 const questions = [
-    // --- BLOQUE 1: ESTRATEGIA ---
+    // --- BLOQUE 1: SOSTENIBILIDAD ECOLÓGICA (8 Preguntas - Verdnatura Specific) ---
     {
         id: 1,
-        block: "Estrategia",
-        question: "Éxito empresarial: ¿Se basa en el crecimiento infinito del PIB o en prosperar dentro del equilibrio del Modelo Donut?",
+        block: "Sostenibilidad Ecológica",
+        question: "Placas Solares: ¿Qué porcentaje del consumo de las cámaras de frío y naves cubrimos con nuestras placas solares?",
         options: [
-            { text: "Solo PIB y ganar cuanta más pasta mejor.", points: 0, recomendacion: "⚠️ Área Crítica: Solo PIB." },
-            { text: "Ganar dinero es lo primero, pero intentando no molestar mucho al entorno.", points: 3, recomendacion: "Estás en transición." },
-            { text: "Tenemos objetivos sociales medibles, aunque el beneficio sigue mandando.", points: 7, recomendacion: "Bien, objetivos sociales." },
-            { text: "Prosperar en equilibrio es nuestro prioridad.", points: 10, recomendacion: "¡Excelente! Modelo Donut." }
+            { text: "0%", points: 0, recomendacion: "⚠️ Área Crítica: Dependencia fósil." },
+            { text: "<30%", points: 3, recomendacion: "Inicio de transición." },
+            { text: ">60%", points: 7, recomendacion: "Buen nivel de autoconsumo." },
+            { text: "Autoconsumo casi total", points: 10, recomendacion: "Excelencia: Soberanía energética." }
         ]
     },
     {
         id: 2,
-        block: "Estrategia",
-        question: "Techo Ecológico: ¿Sabes cuántos recursos consumes y cuánta contaminación generas antes de pasarte de los límites?",
+        block: "Sostenibilidad Ecológica",
+        question: "Cámaras Frigoríficas: ¿Cómo gestionamos la eficiencia del frío para preservar las flores?",
         options: [
-            { text: "Ni idea de qué es eso.", points: 0, recomendacion: "⚠️ Área Crítica: Desconocimiento total." },
-            { text: "Sabemos que contaminamos, pero no medimos nada.", points: 3, recomendacion: "Empieza a medir." },
-            { text: "Medimos nuestra huella de CO2 y papel anualmente.", points: 7, recomendacion: "Buena medición anual." },
-            { text: "Monitorización total de límites planetarios (agua, CO2, residuos).", points: 10, recomendacion: "Control total de límites." }
+            { text: "Sin control", points: 0, recomendacion: "⚠️ Área Crítica: Despilfarro energético." },
+            { text: "Termostatos básicos", points: 3, recomendacion: "Control estándar." },
+            { text: "Aislamiento reforzado", points: 7, recomendacion: "Eficiencia pasiva." },
+            { text: "Sistema inteligente optimizado por sensores", points: 10, recomendacion: "Excelencia: Frío inteligente." }
         ]
     },
     {
         id: 3,
-        block: "Estrategia",
-        question: "Suelo Social: ¿Tus beneficios se logran respetando los derechos básicos de tu gente o vas pisando el 'Suelo Social'?",
+        block: "Sostenibilidad Ecológica",
+        question: "Logística de Importación (Sudamérica): ¿Medimos la huella de CO2 de las flores que traemos en avión/barco desde Sudamérica?",
         options: [
-            { text: "Si para ganar hay que apretar al trabajador, se hace.", points: 0, recomendacion: "⚠️ Área Crítica: Explotación laboral." },
-            { text: "Cumplimos el convenio y poco más.", points: 3, recomendacion: "Cumplimiento mínimo." },
-            { text: "Ofrecemos beneficios extra y cuidamos el clima laboral seriamente.", points: 7, recomendacion: "Buen clima laboral." },
-            { text: "Garantizamos dignidad total y bienestar por encima de la ley.", points: 10, recomendacion: "Dignidad total." }
+            { text: "No se mide", points: 0, recomendacion: "⚠️ Área Crítica: Impacto oculto." },
+            { text: "Solo pesaje", points: 3, recomendacion: "Control de carga." },
+            { text: "Estimación de emisiones", points: 7, recomendacion: "Conciencia de impacto." },
+            { text: "Plan de reducción y compensación de huella", points: 10, recomendacion: "Excelencia: Logística carbono neutral." }
         ]
     },
     {
         id: 4,
-        block: "Estrategia",
-        question: "Obsolescencia: ¿Diseñas servicios/productos para que duren o para que mueran pronto y te vuelvan a comprar?",
+        block: "Sostenibilidad Ecológica",
+        question: "Transporte Local: ¿Cómo optimizamos las rutas de reparto nacional?",
         options: [
-            { text: "Programada: que vuelvan a comprar pronto.", points: 0, recomendacion: "⚠️ Área Crítica: Obsolescencia programada." },
-            { text: "No nos importa cuánto dure, solo que se venda.", points: 3, recomendacion: "Indiferencia ante durabilidad." },
-            { text: "Intentamos que sea duradero y damos soporte largo.", points: 7, recomendacion: "Esfuerzo por durabilidad." },
-            { text: "Diseño para la eternidad: reparable, actualizable y circular.", points: 10, recomendacion: "Diseño circular perfecto." }
+            { text: "Rutas fijas", points: 0, recomendacion: "⚠️ Área Crítica: Ineficiencia." },
+            { text: "Google Maps básico", points: 3, recomendacion: "Digitalización básica." },
+            { text: "Algoritmo de rutas", points: 7, recomendacion: "Optimización matemática." },
+            { text: "Optimización total de carga y rutas para ahorro de combustible", points: 10, recomendacion: "Excelencia: Logística verde." }
         ]
     },
     {
         id: 5,
-        block: "Estrategia",
-        question: "Resiliencia: ¿Tu empresa sabría 'aterrizar' y mantenerse si el mercado dejara de crecer?",
+        block: "Sostenibilidad Ecológica",
+        question: "Servidores Locales: Tenemos servidores físicos en la nave, ¿están en una sala climatizada eficiente?",
         options: [
-            { text: "Si dejamos de crecer, nos hundimos (Adicción al crecimiento).", points: 0, recomendacion: "⚠️ Área Crítica: Adicción al crecimiento." },
-            { text: "Sufriríamos mucho, no tenemos plan B.", points: 3, recomendacion: "Falta de plan B." },
-            { text: "Tenemos ahorros y estructura para aguantar un mercado estancado.", points: 7, recomendacion: "Buena estructura financiera." },
-            { text: "Priorizamos la estabilidad al volumen.", points: 10, recomendacion: "Resiliencia total." }
+            { text: "Sala normal", points: 0, recomendacion: "⚠️ Área Crítica: Riesgo y gasto." },
+            { text: "Aire acondicionado estándar", points: 3, recomendacion: "Climatización básica." },
+            { text: "Pasillo frío/caliente", points: 7, recomendacion: "Eficiencia Data Center." },
+            { text: "Servidores de bajo consumo alimentados 100% por placas solares", points: 10, recomendacion: "Excelencia: Green IT." }
         ]
     },
     {
         id: 6,
-        block: "Estrategia",
-        question: "Plan SMART: ¿Tienes un plan de sostenibilidad real a 3 años o vas a salto de mata?",
+        block: "Sostenibilidad Ecológica",
+        question: "Migración a Odoo: ¿Ha servido el cambio a Odoo para eliminar el papel en almacén?",
         options: [
-            { text: "Sobrevivir mes a mes.", points: 0, recomendacion: "⚠️ Área Crítica: Supervivencia pura." },
-            { text: "Tenemos objetivos financieros, nada más.", points: 3, recomendacion: "Solo visión financiera." },
-            { text: "Plan a 3 años con algunas metas sostenibles.", points: 7, recomendacion: "Plan a medio plazo." },
-            { text: "Plan Estratégico SMART alineado 100% con la EBC.", points: 10, recomendacion: "Estrategia EBC total." }
+            { text: "Seguimos usando papel", points: 0, recomendacion: "⚠️ Área Crítica: Digitalización fallida." },
+            { text: "Algún albarán digital", points: 3, recomendacion: "Híbrido." },
+            { text: "Mayoría en tablets", points: 7, recomendacion: "Digitalización avanzada." },
+            { text: "Oficina y almacén 100% Paperless", points: 10, recomendacion: "Excelencia: Cero Papel." }
         ]
     },
-    // --- BLOQUE 2: SOCIAL ---
     {
         id: 7,
-        block: "Social",
-        question: "Brecha Salarial: ¿Cuál es el ratio entre el que más cobra y el que menos?",
+        block: "Sostenibilidad Ecológica",
+        question: "Embalaje: ¿Qué materiales usamos para proteger las flores preservadas?",
         options: [
-            { text: "Más de 1:20 (El jefe cobra por 20).", points: 0, recomendacion: "⚠️ Área Crítica: Desigualdad extrema." },
-            { text: "Entre 1:11 y 1:20 (Lo normal en empresas grandes).", points: 3, recomendacion: "Brecha considerable." },
-            { text: "Entre 1:6 y 1:10 (Esfuerzo por la equidad).", points: 7, recomendacion: "Esfuerzo por equidad." },
-            { text: "Máximo 1:5 (Justicia social real).", points: 10, recomendacion: "Justicia social real." }
+            { text: "Plástico de burbujas virgen", points: 0, recomendacion: "⚠️ Área Crítica: Plástico de un solo uso." },
+            { text: "Cartón estándar", points: 3, recomendacion: "Mejora material." },
+            { text: "Cartón reciclado", points: 7, recomendacion: "Circularidad básica." },
+            { text: "Materiales compostables y residuo cero", points: 10, recomendacion: "Excelencia: Packaging sostenible." }
         ]
     },
     {
         id: 8,
-        block: "Social",
-        question: "Democracia Interna: ¿Se puede opinar sobre el rumbo de la empresa o es una dictadura vertical?",
+        block: "Sostenibilidad Ecológica",
+        question: "Residuos Orgánicos: ¿Qué hacemos con las flores que no se pueden vender (mermas)?",
         options: [
-            { text: "Dictadura: se hace lo que dice el de arriba.", points: 0, recomendacion: "⚠️ Área Crítica: Autoritarismo." },
-            { text: "Se escucha, pero la decisión final no se negocia.", points: 3, recomendacion: "Escucha sin voto." },
-            { text: "El equipo decide sobre temas de oficina y bienestar.", points: 7, recomendacion: "Participación media." },
-            { text: "Democracia real: votamos las decisiones estratégicas.", points: 10, recomendacion: "Democracia real." }
+            { text: "Basura normal", points: 0, recomendacion: "⚠️ Área Crítica: Desperdicio." },
+            { text: "Contenedor orgánico sin más", points: 3, recomendacion: "Gestión municipal." },
+            { text: "Compostaje externo", points: 7, recomendacion: "Valorización externa." },
+            { text: "Revalorización para otros productos o abono local", points: 10, recomendacion: "Excelencia: Economía Circular." }
+        ]
+    },
+
+    {
+        id: 41,
+        block: "Sostenibilidad Ecológica",
+        question: "Gestión del Agua: ¿Cómo controlamos el consumo de agua en los procesos de preservación y limpieza de las flores?",
+        options: [
+            { text: "No medimos el consumo de agua.", points: 0, recomendacion: "⚠️ Área Crítica: Descontrol." },
+            { text: "Medimos el consumo global de la nave.", points: 3, recomendacion: "Medición básica." },
+            { text: "Tenemos sistemas de ahorro en grifos y procesos.", points: 7, recomendacion: "Eficiencia hídrica." },
+            { text: "Circuito cerrado de agua con depuración y reutilización interna.", points: 10, recomendacion: "Excelencia: Ciclo cerrado." }
         ]
     },
     {
-        id: 9,
-        block: "Social",
-        question: "Desconexión Digital: ¿El Slack/WhatsApp echa humo fuera de horario o respetáis el descanso?",
+        id: 42,
+        block: "Sostenibilidad Ecológica",
+        question: "Logística Inversa: ¿Tenemos un sistema para recuperar y reutilizar los palés y cajas que enviamos a los clientes?",
         options: [
-            { text: "Disponibilidad 24/7 exigida.", points: 0, recomendacion: "⚠️ Área Crítica: Esclavitud digital." },
-            { text: "Se envían correos fuera de hora pero 'no urge' (mentira).", points: 3, recomendacion: "Falsa desconexión." },
-            { text: "Política de no molestar tras la jornada, salvo incendios.", points: 7, recomendacion: "Política de respeto." },
-            { text: "Desconexión sagrada: servidores de chat apagados tras el curro.", points: 10, recomendacion: "Desconexión sagrada." }
+            { text: "No recuperamos nada; el cliente gestiona el residuo.", points: 0, recomendacion: "⚠️ Área Crítica: Residuo lineal." },
+            { text: "Recuperamos palés estándar pero no las cajas.", points: 3, recomendacion: "Recuperación parcial." },
+            { text: "Tenemos una ruta de recogida de envases propios.", points: 7, recomendacion: "Logística inversa." },
+            { text: "Sistema 100% circular con embalajes retornables de larga duración.", points: 10, recomendacion: "Excelencia: Economía Circular real." }
+        ]
+    },
+
+    // --- BLOQUE 2: JUSTICIA SOCIAL (8 Preguntas - 5 Verdnatura + 3 Generic) ---
+    {
+        id: 9,
+        block: "Justicia Social",
+        question: "Dumping Ético: ¿Auditamos que las flores de Sudamérica no vengan de fincas con explotación laboral?",
+        isCritical: true, // PENALTY APPLIES HERE
+        options: [
+            { text: "Solo miramos precio", points: 0, recomendacion: "⛔ RIESGO ÉTICO: Complicidad." },
+            { text: "Confiamos en el proveedor", points: 3, recomendacion: "Confianza ciega." },
+            { text: "Pedimos certificados éticos", points: 7, recomendacion: "Control documental." },
+            { text: "Auditoría propia o Comercio Justo", points: 10, recomendacion: "Excelencia: Cadena ética." }
         ]
     },
     {
         id: 10,
-        block: "Social",
-        question: "Diversidad: ¿Buscas 'clones' que piensen igual o valoras la diversidad real?",
+        block: "Justicia Social",
+        question: "¿Pagamos todos nuestros impuestos en España para apoyar los servicios públicos?",
+        isCritical: true, // PENALTY APPLIES HERE
         options: [
-            { text: "Buscamos 'clones' que piensen igual.", points: 0, recomendacion: "⚠️ Área Crítica: Falta de diversidad." },
-            { text: "Intentamos ser abiertos, pero no hay planes reales.", points: 3, recomendacion: "Intención sin plan." },
-            { text: "Tenemos cuotas de diversidad", points: 7, recomendacion: "Medidas activas de diversidad." },
-            { text: "La diversidad es nuestra mayor fuerza y está en todos los niveles.", points: 10, recomendacion: "Diversidad integrada." }
+            { text: "Ingeniería fiscal", points: 0, recomendacion: "⛔ RIESGO ÉTICO: Evasión." },
+            { text: "Lo mínimo legal", points: 3, recomendacion: "Cumplimiento básico." },
+            { text: "Pago justo", points: 7, recomendacion: "Responsabilidad." },
+            { text: "Transparencia total en contribución fiscal", points: 10, recomendacion: "Excelencia: Civismo fiscal." }
         ]
     },
     {
         id: 11,
-        block: "Social",
-        question: "Formación Ética: ¿Enseñas a tu equipo sostenibilidad y EBC o solo cómo producir más?",
+        block: "Justicia Social",
+        question: "Precios a Productores Locales: Al comprar a locales, ¿pagamos un precio justo o solo el más bajo posible?",
         options: [
-            { text: "Solo formación técnica para producir.", points: 0, recomendacion: "⚠️ Área Crítica: Solo producción." },
-            { text: "Alguna charla suelta sobre reciclaje.", points: 3, recomendacion: "Formación superficial." },
-            { text: "Cursos anuales de ética, EBC y Green IT.", points: 7, recomendacion: "Formación anual sólida." },
-            { text: "La sostenibilidad es parte central de la formación continua.", points: 10, recomendacion: "Sostenibilidad central." }
+            { text: "Solo el más bajo", points: 0, recomendacion: "⚠️ Área Crítica: Asfixia al productor." },
+            { text: "Precio de mercado", points: 3, recomendacion: "Estándar." },
+            { text: "Contratos a largo plazo", points: 7, recomendacion: "Estabilidad." },
+            { text: "Precio que garantiza la vida digna del agricultor", points: 10, recomendacion: "Excelencia: Comercio Justo local." }
         ]
     },
     {
         id: 12,
-        block: "Social",
-        question: "Salud y Ergonomía: ¿Cuidas las espaldas de tu equipo con mobiliario decente o usas lo más barato?",
+        block: "Justicia Social",
+        question: "Brecha Salarial: Ratio entre el sueldo más alto y el más bajo en Verdnatura.",
         options: [
-            { text: "Mobiliario barato de IKEA, el que haya.", points: 0, recomendacion: "⚠️ Área Crítica: Descuido ergonómico." },
-            { text: "Sillas estándar de oficina sin más.", points: 3, recomendacion: "Mobiliario estándar." },
-            { text: "Revisión ergonómica y sillas de calidad para todos.", points: 7, recomendacion: "Buena ergonomía." },
-            { text: "Cuidado físico total: fisio, mobiliario top y descansos activos.", points: 10, recomendacion: "Cuidado físico total." }
+            { text: ">1:20", points: 0, recomendacion: "⚠️ Área Crítica: Desigualdad excesiva." },
+            { text: "1:12-20", points: 3, recomendacion: "Brecha alta." },
+            { text: "1:6-11", points: 7, recomendacion: "Brecha moderada." },
+            { text: "<1:5", points: 10, recomendacion: "Excelencia: Equidad salarial." }
         ]
     },
     {
         id: 13,
-        block: "Social",
-        question: "Propósito Laboral: ¿Tu equipo sabe qué problema social resuelve su trabajo o solo vienen a fichar?",
+        block: "Justicia Social",
+        question: "¿Dónde están las cuentas bancarias de Verdnatura?",
         options: [
-            { text: "Vienen a facturar y ya.", points: 0, recomendacion: "⚠️ Área Crítica: Falta de propósito." },
-            { text: "Saben que el producto es bueno, nada más.", points: 3, recomendacion: "Conocimiento de producto." },
-            { text: "Entienden el valor social de lo que hacen.", points: 7, recomendacion: "Conciencia social." },
-            { text: "Propósito compartido: todos sabemos qué problema del mundo resolvemos.", points: 10, recomendacion: "Propósito transformador." }
+            { text: "Banca tradicional", points: 0, recomendacion: "⚠️ Área Crítica: Finanzas opacas." },
+            { text: "Banco con cuenta eco", points: 3, recomendacion: "Greenwashing potencial." },
+            { text: "Cooperativa de crédito", points: 7, recomendacion: "Banca social." },
+            { text: "Banca Ética 100%", points: 10, recomendacion: "Excelencia: Coherencia financiera." }
         ]
     },
-    // --- BLOQUE 3: ECOLOGÍA ---
     {
         id: 14,
-        block: "Ecología",
-        question: "Ahorro Energético: Selecciona qué medidas aplicáis :",
-        type: "checkbox",
+        block: "Justicia Social",
+        question: "Algoritmos: ¿Hemos comprobado si los programas de ordenador que usamos (para elegir personal, organizar rutas o poner precios) pueden estar discriminando o tratando de forma injusta a alguien por su género, origen o edad?",
         options: [
-            { text: "Modo oscuro", points: 2.5, recomendacion: "Ahorra batería en OLED." },
-            { text: "Apagado total", points: 2.5, recomendacion: "Evita consumo fantasma." },
-            { text: "Brillo optimizado", points: 2.5, recomendacion: "Reduce consumo de monitor." },
-            { text: "Regletas inteligentes", points: 2.5, recomendacion: "Gestión eficiente de energía." }
+            { text: "Ni nos lo hemos planteado", points: 0, recomendacion: "⚠️ Área Crítica: Ceguera ética." },
+            { text: "Usamos programas estándar del mercado y suponemos que ya vienen bien configurados", points: 3, recomendacion: "Riesgo pasivo." },
+            { text: "Revisamos que no haya discriminación por género, origen o edad", points: 7, recomendacion: "Revisión básica." },
+            { text: "Auditados contra racismo/sexismo", points: 10, recomendacion: "Excelencia: Justicia algorítmica." }
         ]
     },
     {
         id: 15,
-        block: "Ecología",
-        question: "Criterio de Compra HW: ¿Qué prima al comprar equipos?",
+        block: "Justicia Social",
+        question: "Limpieza Eco: ¿Productos tóxicos para quien limpia?",
         options: [
-            { text: "El más barato de Amazon/PC Componentes.", points: 0, recomendacion: "⚠️ Área Crítica: Compra por precio." },
-            { text: "El más potente aunque no se necesite.", points: 3, recomendacion: "Despilfarro de potencia." },
-            { text: "Con certificado energético Gold/Platinum.", points: 7, recomendacion: "Eficiencia energética." },
-            { text: "Prioridad a la reparabilidad y piezas de recambio.", points: 10, recomendacion: "Reparabilidad prioritaria." }
+            { text: "Lejía y químicos fuertes", points: 0, recomendacion: "⚠️ Área Crítica: Toxicidad laboral." },
+            { text: "Limpieza estándar", points: 3, recomendacion: "Estándar." },
+            { text: "Productos Ecolabel", points: 7, recomendacion: "Reducción de riesgos." },
+            { text: "Limpieza eco 100% y residuo cero", points: 10, recomendacion: "Excelencia: Salud laboral y ambiental." }
         ]
     },
     {
         id: 16,
-        block: "Ecología",
-        question: "Software Inflado (Bloatware): ¿Tu código es ligero o una mole?",
+        block: "Justicia Social",
+        question: "Igualdad de Oportunidades: ¿Cómo se contrata?",
         options: [
-            { text: "Código sucio y librerías pesadas que no usamos.", points: 0, recomendacion: "⚠️ Área Crítica: Código ineficiente." },
-            { text: "Programamos estándar; si la máquina es potente, que tire.", points: 3, recomendacion: "Programación despreocupada." },
-            { text: "Refactorizamos para quitar basura antes de desplegar.", points: 7, recomendacion: "Limpieza de código." },
-            { text: "Eco-diseño: optimizado al byte para ahorrar CPU y batería.", points: 10, recomendacion: "Eco-diseño de software." }
+            { text: "A dedo / Amiguismo", points: 0, recomendacion: "⚠️ Área Crítica: Nepotismo." },
+            { text: "Currículum ciego (a veces)", points: 3, recomendacion: "Intento de igualdad." },
+            { text: "Procesos estandarizados", points: 7, recomendacion: "Profesionalidad." },
+            { text: "Discriminación positiva activa y paridad", points: 10, recomendacion: "Excelencia: Igualdad real." }
         ]
     },
+
+    // --- BLOQUE 3: SOLIDARIDAD (8 Preguntas - 4 Verdnatura + 4 Generic) ---
     {
         id: 17,
-        block: "Ecología",
-        question: "Servidores (Cloud): ¿Dónde alojas tus datos?",
+        block: "Solidaridad",
+        question: "Prioridad Local: ¿Qué porcentaje de nuestras compras (no flores) son a empresas del barrio o región?",
         options: [
-            { text: "Ni idea de dónde están.", points: 0, recomendacion: "⚠️ Área Crítica: Desconocimiento de hosting." },
-            { text: "Un hosting barato estándar.", points: 3, recomendacion: "Hosting genérico." },
-            { text: "Hosting nacional con medidas de ahorro.", points: 7, recomendacion: "Hosting nacional eficiente." },
-            { text: "Servidores 100% renovables con PUE muy bajo.", points: 10, recomendacion: "Hosting verde certificado." }
+            { text: "Todo Amazon/Multis", points: 0, recomendacion: "⚠️ Área Crítica: Fuga de capital." },
+            { text: "<30%", points: 3, recomendacion: "Bajo impacto local." },
+            { text: ">60%", points: 7, recomendacion: "Buen soporte local." },
+            { text: "Prioridad absoluta KM 0", points: 10, recomendacion: "Excelencia: Economía local." }
         ]
     },
     {
         id: 18,
-        block: "Ecología",
-        question: "Gestión de RAEE (Residuos): ¿Qué haces con la electrónica vieja?",
+        block: "Solidaridad",
+        question: "Software Libre: Con Odoo (que es open source), ¿fomentamos el uso de otras herramientas libres?",
         options: [
-            { text: "A la basura normal o al contenedor de la esquina.", points: 0, recomendacion: "⚠️ Área Crítica: Contaminación directa." },
-            { text: "Guardados en el 'cajón del olvido' mil años.", points: 3, recomendacion: "Acumulación sin uso." },
-            { text: "Reciclaje en punto limpio certificado.", points: 7, recomendacion: "Reciclaje correcto." },
-            { text: "Reacondicionamiento, donación o venta de piezas.", points: 10, recomendacion: "Economía circular real." }
+            { text: "Todo cerrado/Microsoft", points: 0, recomendacion: "⚠️ Área Crítica: Dependencia tecnológica." },
+            { text: "Solo Odoo", points: 3, recomendacion: "Inicio open source." },
+            { text: "Estrategia de migración a Linux/LibreOffice", points: 7, recomendacion: "Avance hacia la libertad." },
+            { text: "Soberanía tecnológica total", points: 10, recomendacion: "Excelencia: Cultura libre." }
         ]
     },
     {
         id: 19,
-        block: "Ecología",
-        question: "Monitorización kWh: ¿Controlas tu consumo energético?",
+        block: "Solidaridad",
+        question: "Colaboración Sectorial: ¿Compartimos datos de sostenibilidad con otros floristas?",
         options: [
-            { text: "Ni miramos la factura de luz.", points: 0, recomendacion: "⚠️ Área Crítica: Ceguera energética." },
-            { text: "Miramos el importe (€), no el consumo (kWh).", points: 3, recomendacion: "Visión solo económica." },
-            { text: "Analizamos el consumo mensual para buscar picos.", points: 7, recomendacion: "Análisis mensual." },
-            { text: "Control total por zonas y monitorización en tiempo real.", points: 10, recomendacion: "Monitorización avanzada." }
+            { text: "Competencia agresiva", points: 0, recomendacion: "⚠️ Área Crítica: Aislamiento." },
+            { text: "Alguna charla", points: 3, recomendacion: "Contacto puntual." },
+            { text: "Asociación sectorial", points: 7, recomendacion: "Asociacionismo." },
+            { text: "Cooperación activa para mejorar el sector", points: 10, recomendacion: "Excelencia: Coopetencia." }
         ]
     },
     {
         id: 20,
-        block: "Ecología",
-        question: "Hardware Usado: ¿Compras segunda mano?",
+        block: "Solidaridad",
+        question: "Apoyo Social: ¿Donamos flores o recursos a proyectos sociales locales?",
         options: [
-            { text: "Todo tiene que ser nuevo y brillante.", points: 0, recomendacion: "⚠️ Área Crítica: Obsesión por lo nuevo." },
-            { text: "Alguna vez hemos comprado algo usado por ahorrar.", points: 3, recomendacion: "Uso ocasional de segunda mano." },
-            { text: "Consideramos el reacondicionado como opción seria.", points: 7, recomendacion: "Reacondicionado como opción." },
-            { text: "Prioridad total a hardware Refurbished profesional.", points: 10, recomendacion: "Prioridad Refurbished." }
+            { text: "Nada", points: 0, recomendacion: "⚠️ Área Crítica: Indiferencia." },
+            { text: "Donativo puntual", points: 3, recomendacion: "Filantropía básica." },
+            { text: "Cedemos horas de técnicos", points: 7, recomendacion: "Voluntariado corporativo." },
+            { text: "Implicación total en el barrio", points: 10, recomendacion: "Excelencia: Ciudadanía corporativa." }
         ]
     },
     {
         id: 21,
-        block: "Ecología",
-        question: "Oficina sin Papel: ¿Cuánto imprimís?",
+        block: "Solidaridad",
+        question: "Consumo Oficina: ¿Qué coméis/bebéis?",
         options: [
-            { text: "Se imprime todo 'por si acaso'.", points: 0, recomendacion: "⚠️ Área Crítica: Despilfarro de papel." },
-            { text: "Imprimimos a doble cara al menos.", points: 3, recomendacion: "Ahorro básico." },
-            { text: "Solo imprimimos lo legalmente obligatorio.", points: 7, recomendacion: "Impresión mínima." },
-            { text: "Oficina 99% digital con firma electrónica.", points: 10, recomendacion: "Oficina Paperless." }
+            { text: "Lo más barato del súper", points: 0, recomendacion: "⚠️ Área Crítica: Consumo inconsciente." },
+            { text: "Marcas conocidas", points: 3, recomendacion: "Consumo de marca." },
+            { text: "Productos de Comercio Justo a veces", points: 7, recomendacion: "Consumo consciente." },
+            { text: "Suministros 100% Comercio Justo y Local", points: 10, recomendacion: "Excelencia: Oficina Fair Trade." }
         ]
     },
-    // --- BLOQUE 4: JUSTICIA ---
     {
         id: 22,
-        block: "Justicia",
-        question: "Dumping Ético: ¿Compras a quien explota para ahorrar?",
+        block: "Solidaridad",
+        question: "Distribución de Beneficios: ¿Cómo se reparten los beneficios?",
         options: [
-            { text: "Si es más barato, compramos aunque exploten gente.", points: 0, recomendacion: "⚠️ Área Crítica: Complicidad en explotación." },
-            { text: "Intentamos que no, pero no investigamos mucho.", points: 3, recomendacion: "Pasividad ante explotación." },
-            { text: "Exigimos códigos de conducta a los proveedores.", points: 7, recomendacion: "Exigencia ética." },
-            { text: "Solo proveedores con sellos éticos certificados.", points: 10, recomendacion: "Certificación ética." }
+            { text: "Todo para los dueños", points: 0, recomendacion: "⚠️ Área Crítica: Acumulación." },
+            { text: "Se reinvierte poco", points: 3, recomendacion: "Reinversión mínima." },
+            { text: "Reparto con trabajadores", points: 7, recomendacion: "Reparto inclusivo." },
+            { text: "Limitación de lucro y donación a bienes comunes", points: 10, recomendacion: "Excelencia: Lucro limitado." }
         ]
     },
     {
         id: 23,
-        block: "Justicia",
-        question: "Proximidad: ¿De dónde vienen tus compras?",
+        block: "Solidaridad",
+        question: "Financiación Solidaria: ¿Prestamos dinero a empleados/proyectos?",
         options: [
-            { text: "Todo de fuera, manda el precio de compra.", points: 0, recomendacion: "⚠️ Área Crítica: Dependencia global." },
-            { text: "Mitad y mitad.", points: 3, recomendacion: "Mix local-global." },
-            { text: "Priorizamos proveedores nacionales.", points: 7, recomendacion: "Prioridad nacional." },
-            { text: "Compra de proximidad: proveedores del barrio/región (KM 0).", points: 10, recomendacion: "Comercio local KM 0." }
+            { text: "Nunca", points: 0, recomendacion: "Estrictamente comercial." },
+            { text: "Adelantos de nómina", points: 3, recomendacion: "Ayuda básica." },
+            { text: "Préstamos sin interés", points: 7, recomendacion: "Finanzas solidarias." },
+            { text: "Fondo de solidaridad interno", points: 10, recomendacion: "Excelencia: Comunidad financiera." }
         ]
     },
     {
         id: 24,
-        block: "Justicia",
-        question: "Banca Ética: ¿Dónde está tu dinero?",
+        block: "Solidaridad",
+        question: "Trato a Proveedores: ¿Cómo pagáis?",
         options: [
-            { text: "Banca tradicional especulativa de toda la vida.", points: 0, recomendacion: "⚠️ Área Crítica: Financiación opaca." },
-            { text: "Banco normal pero con cuenta 'sostenible'.", points: 3, recomendacion: "Greenwashing bancario posible." },
-            { text: "Cooperativa de crédito o banca con inversión ética real.", points: 7, recomendacion: "Banca cooperativa." },
-            { text: "Banca Ética (Triodos, Fiare, etc.) 100%.", points: 10, recomendacion: "Banca ética 100%." }
+            { text: "Pagamos tarde (180 días)", points: 0, recomendacion: "⚠️ Área Crítica: Abuso financiero." },
+            { text: "60-90 días", points: 3, recomendacion: "Pago lento." },
+            { text: "30 días (Ley)", points: 7, recomendacion: "Cumplimiento." },
+            { text: "Al contado o por adelantado", points: 10, recomendacion: "Excelencia: Solidaridad financiera." }
         ]
     },
+
+    {
+        id: 44,
+        block: "Solidaridad",
+        question: "Impacto en la Biodiversidad: ¿Colaboramos en proyectos de protección de polinizadores (abejas) o reforestación en las zonas de cultivo?",
+        options: [
+            { text: "No participamos en proyectos ambientales externos.", points: 0, recomendacion: "⚠️ Área Crítica: Desconexión." },
+            { text: "Donaciones puntuales a ONGs ambientales.", points: 3, recomendacion: "Filantropía." },
+            { text: "Colaboración activa en proyectos de biodiversidad local.", points: 7, recomendacion: "Compromiso ecológico." },
+            { text: "Tenemos nuestro propio proyecto de regeneración de ecosistemas.", points: 10, recomendacion: "Excelencia: Regeneración." }
+        ]
+    },
+
+    // --- BLOQUE 4: DIGNIDAD HUMANA (8 Preguntas - 4 Verdnatura + 4 Generic) ---
     {
         id: 25,
-        block: "Justicia",
-        question: "Soberanía Tecnológica: ¿Software libre o propietario?",
+        block: "Dignidad Humana",
+        question: "Salud en Almacén: ¿Tienen los mozos de almacén fajas, calzado ergonómico y formación en cargas?",
         options: [
-            { text: "Software privativo cerrado y caro siempre.", points: 0, recomendacion: "⚠️ Área Crítica: Dependencia tecnológica." },
-            { text: "Alguna herramienta Open Source usamos por ahorrar.", points: 3, recomendacion: "Uso oportunista de Open Source." },
-            { text: "Estrategia de migración activa a Software Libre.", points: 7, recomendacion: "Migración a FLOSS." },
-            { text: "Prioridad total al Software Libre y Soberanía Digital.", points: 10, recomendacion: "Soberanía digital total." }
+            { text: "No", points: 0, recomendacion: "⚠️ Área Crítica: Riesgo laboral." },
+            { text: "Lo básico legal", points: 3, recomendacion: "Cumplimiento." },
+            { text: "Equipamiento de alta calidad", points: 7, recomendacion: "Protección avanzada." },
+            { text: "Prevención total y cuidado físico proactivo", points: 10, recomendacion: "Excelencia: Cultura de salud." }
         ]
     },
     {
         id: 26,
-        block: "Justicia",
-        question: "Consumo Oficina: ¿Qué coméis/bebéis?",
+        block: "Dignidad Humana",
+        question: "Formación Odoo: ¿Se ha formado a todo el personal para que la tecnología no sea una barrera?",
         options: [
-            { text: "Lo más barato del súper sin mirar nada.", points: 0, recomendacion: "⚠️ Área Crítica: Consumo irresponsable." },
-            { text: "Miramos la marca pero no el origen.", points: 3, recomendacion: "Consumo marquista." },
-            { text: "Compramos productos eco o de comercio justo a veces.", points: 7, recomendacion: "Consumo consciente ocasional." },
-            { text: "Suministros (café, té, fruta) 100% Comercio Justo y Local.", points: 10, recomendacion: "Comercio justo y local 100%." }
+            { text: "Se apañan solos", points: 0, recomendacion: "⚠️ Área Crítica: Estrés digital." },
+            { text: "Manual PDF", points: 3, recomendacion: "Autoaprendizaje." },
+            { text: "Curso presencial", points: 7, recomendacion: "Capacitación formal." },
+            { text: "Formación continua y acompañamiento digital", points: 10, recomendacion: "Excelencia: Empoderamiento digital." }
         ]
     },
     {
         id: 27,
-        block: "Justicia",
-        question: "Asesoría EBC: ¿Quién te aconseja?",
+        block: "Dignidad Humana",
+        question: "Conciliación: ¿Respetamos el descanso del personal de oficinas?",
         options: [
-            { text: "Solo saben de maximizar beneficio e impuestos.", points: 0, recomendacion: "⚠️ Área Crítica: Asesoría tradicional." },
-            { text: "Les suena el tema pero no lo aplican.", points: 3, recomendacion: "Conocimiento superficial." },
-            { text: "Nos ayudan a medir indicadores sociales básicos.", points: 7, recomendacion: "Medición social básica." },
-            { text: "Trabajamos con expertos en Economía del Bien Común.", points: 10, recomendacion: "Asesoría experta EBC." }
+            { text: "Siempre disponibles", points: 0, recomendacion: "⚠️ Área Crítica: Esclavitud moderna." },
+            { text: "Algún WhatsApp o llamada fuera de horario", points: 3, recomendacion: "Interrupciones." },
+            { text: "Respeto horario", points: 7, recomendacion: "Conciliación básica." },
+            { text: "Desconexión digital garantizada por contrato", points: 10, recomendacion: "Excelencia: Derecho a la desconexión." }
         ]
     },
     {
         id: 28,
-        block: "Justicia",
-        question: "Limpieza Eco: ¿Con qué limpiáis?",
+        block: "Dignidad Humana",
+        question: "Sentido del Trabajo: ¿Sabe el equipo por qué las flores preservadas son una alternativa sostenible?",
         options: [
-            { text: "Químicos fuertes convencionales que huelen a lejía pura.", points: 0, recomendacion: "⚠️ Área Crítica: Toxicidad en limpieza." },
-            { text: "Limpieza estándar de mercado.", points: 3, recomendacion: "Limpieza estándar." },
-            { text: "Exigimos productos con etiqueta Ecolabel.", points: 7, recomendacion: "Productos Ecolabel." },
-            { text: "Limpieza 100% ecológica, sin tóxicos y residuo cero.", points: 10, recomendacion: "Limpieza eco total." }
+            { text: "No", points: 0, recomendacion: "⚠️ Área Crítica: Alienación." },
+            { text: "Les suena", points: 3, recomendacion: "Información vaga." },
+            { text: "Conocen el producto", points: 7, recomendacion: "Conocimiento producto." },
+            { text: "Embajadores de la marca y la sostenibilidad", points: 10, recomendacion: "Excelencia: Propósito compartido." }
         ]
     },
-    // --- BLOQUE 5: GOBERNANZA ---
     {
         id: 29,
-        block: "Gobernanza",
-        question: "Cuentas Abiertas: ¿Transparencia financiera?",
+        block: "Dignidad Humana",
+        question: "Suelo Social: ¿Se respetan los derechos básicos?",
         options: [
-            { text: "Es secreto total de la dirección.", points: 0, recomendacion: "⚠️ Área Crítica: Opacidad total." },
-            { text: "Se da un resumen muy vago una vez al año.", points: 3, recomendacion: "Transparencia mínima." },
-            { text: "Se informan de los ingresos y gastos trimestralmente.", points: 7, recomendacion: "Información trimestral." },
-            { text: "Transparencia radical: las cuentas están abiertas al equipo.", points: 10, recomendacion: "Transparencia radical." }
+            { text: "Apretamos al máximo", points: 0, recomendacion: "⚠️ Área Crítica: Explotación." },
+            { text: "Convenio mínimo", points: 3, recomendacion: "Legalidad mínima." },
+            { text: "Mejoras voluntarias", points: 7, recomendacion: "Buenas condiciones." },
+            { text: "Dignidad total y bienestar", points: 10, recomendacion: "Excelencia: Bienestar laboral." }
         ]
     },
     {
         id: 30,
-        block: "Gobernanza",
-        question: "Gestión de Errores: ¿Honestidad?",
+        block: "Dignidad Humana",
+        question: "Diversidad ¿Cómo nos tomamos el tema de la diversidad en la plantilla (contratar a gente de distintos países, edades o con discapacidades)??",
         options: [
-            { text: "Se tapa como sea, la imagen manda.", points: 0, recomendacion: "⚠️ Área Crítica: Ocultación de errores." },
-            { text: "Solo se admite si nos pillan o hay denuncia.", points: 3, recomendacion: "Admisión forzada." },
-            { text: "Informamos internamente de los fallos para mejorar.", points: 7, recomendacion: "Aprendizaje interno." },
-            { text: "Honestidad total: admitimos errores públicamente y los reparamos.", points: 10, recomendacion: "Honestidad pública." }
+            { text: "No nos importa; solo queremos gente que no dé problemas y sea igual a nosotros.", points: 0, recomendacion: "⚠️ Área Crítica: Uniformidad." },
+            { text: "Contratamos a perfiles diversos principalmente para pillar subvenciones o porque nos obliga la ley", points: 3, recomendacion: "Inercia." },
+            { text: "Contratamos a gente diversa porque creemos que es lo correcto y nos esforzamos por integrar a todos", points: 7, recomendacion: "Inclusión." },
+            { text: "La diversidad es nuestra fuerza", points: 10, recomendacion: "Excelencia: Diversidad estratégica." }
         ]
     },
     {
         id: 31,
-        block: "Gobernanza",
-        question: "Propiedad: ¿De quién es la empresa?",
+        block: "Dignidad Humana",
+        question: "Privacidad de Datos: ¿Respetas al cliente/empleado?",
         options: [
-            { text: "De un fondo de inversión o dueño que no aparece nunca.", points: 0, recomendacion: "⚠️ Área Crítica: Propiedad ausente." },
-            { text: "Del fundador al 100%.", points: 3, recomendacion: "Propiedad única." },
-            { text: "El equipo tiene un pequeño porcentaje de acciones.", points: 7, recomendacion: "Participación accionarial." },
-            { text: "Modelo cooperativo o propiedad colectiva real.", points: 10, recomendacion: "Propiedad colectiva." }
+            { text: "Mercadeamos datos", points: 0, recomendacion: "⚠️ Área Crítica: Violación privacidad." },
+            { text: "Cumplimos RGPD", points: 3, recomendacion: "Cumplimiento legal." },
+            { text: "Privacidad por diseño", points: 7, recomendacion: "Ética de datos." },
+            { text: "Soberanía total de datos", points: 10, recomendacion: "Excelencia: Derechos digitales." }
         ]
     },
     {
         id: 32,
-        block: "Gobernanza",
-        question: "Marketing: ¿Verdad o Greenwashing?",
+        block: "Dignidad Humana",
+        question: "Promoción Interna: ¿Hay futuro aquí?",
         options: [
-            { text: "Greenwashing: fotos con árboles mientras contaminamos.", points: 0, recomendacion: "⚠️ Área Crítica: Greenwashing." },
-            { text: "Exageramos un poco los logros sociales.", points: 3, recomendacion: "Exageración." },
-            { text: "Comunicación basada solo en hechos demostrables.", points: 7, recomendacion: "Hechos demostrables." },
-            { text: "Transparencia radical y marketing honesto basado en datos.", points: 10, recomendacion: "Marketing honesto." }
+            { text: "Techo de cristal", points: 0, recomendacion: "⚠️ Área Crítica: Estancamiento." },
+            { text: "A veces", points: 3, recomendacion: "Sin plan carrera." },
+            { text: "Prioridad interna", points: 7, recomendacion: "Desarrollo." },
+            { text: "Planes de carrera transparentes para todos", points: 10, recomendacion: "Excelencia: Crecimiento personal." }
         ]
     },
+
+    {
+        id: 43,
+        block: "Dignidad Humana",
+        question: "Salud Mental y Estrés: ¿Existe algún programa para gestionar el estrés en épocas de picos de trabajo (ej: San Valentín, Día de la Madre)?",
+        options: [
+            { text: "No se tiene en cuenta; hay que sacar el trabajo como sea.", points: 0, recomendacion: "⚠️ Área Crítica: Burnout." },
+            { text: "Se dan descansos extra tras los picos de trabajo.", points: 3, recomendacion: "Compensación." },
+            { text: "Formación en gestión del estrés y ritmos de trabajo.", points: 7, recomendacion: "Prevención." },
+            { text: "Plan de bienestar emocional con apoyo profesional y organización flexible.", points: 10, recomendacion: "Excelencia: Cuidado integral." }
+        ]
+    },
+
+    // --- BLOQUE 5: DEMOCRACIA Y TRANSPARENCIA (8 Preguntas - Generic) ---
     {
         id: 33,
-        block: "Gobernanza",
-        question: "Sueldos Públicos: ¿Se saben?",
+        block: "Democracia y Transparencia",
+        question: "Democracia Interna: ¿Quién decide?",
         options: [
-            { text: "Prohibido hablar de lo que uno cobra.", points: 0, recomendacion: "⚠️ Área Crítica: Tabú salarial." },
-            { text: "Se saben los rangos generales por categoría.", points: 3, recomendacion: "Rangos conocidos." },
-            { text: "Sabemos lo que cobra cada uno, pero es tabú.", points: 7, recomendacion: "Conocimiento informal." },
-            { text: "Sueldos públicos y transparentes dentro de la empresa.", points: 10, recomendacion: "Transparencia salarial total." }
+            { text: "Dictadura vertical", points: 0, recomendacion: "⚠️ Área Crítica: Autoritarismo." },
+            { text: "Se escucha, decide el jefe", points: 3, recomendacion: "Consultivo." },
+            { text: "Decisiones compartidas", points: 7, recomendacion: "Participación." },
+            { text: "Un trabajador, un voto", points: 10, recomendacion: "Excelencia: Democracia económica." }
         ]
     },
-    // --- BLOQUE 6: CLIENTES ---
     {
         id: 34,
-        block: "Clientes",
-        question: "Privacidad: ¿Qué hacéis con los datos?",
+        block: "Democracia y Transparencia",
+        question: "Propiedad: ¿De quién es la empresa?",
         options: [
-            { text: "Mercadeamos con los datos si podemos.", points: 0, recomendacion: "⚠️ Área Crítica: Venta de datos." },
-            { text: "Cumplimos la ley (RGPD) por miedo a la multa.", points: 3, recomendacion: "Cumplimiento legal mínimo." },
-            { text: "Aplicamos privacidad por diseño.", points: 7, recomendacion: "Privacidad por diseño." },
-            { text: "Ética de datos total: soberanía absoluta del cliente.", points: 10, recomendacion: "Soberanía de datos." }
+            { text: "Fondos de inversión o dueños que ni pisan la nave y solo quieren rentabilidad.", points: 0, recomendacion: "⚠️ Área Crítica: Desarraigo." },
+            { text: "El fundador original sigue al mando y toma todas las decisiones importantes.", points: 3, recomendacion: "Tradicional." },
+            { text: "Los trabajadores tienen acciones y participan en las decisiones importantes", points: 7, recomendacion: "Participada." },
+            { text: "Cooperativa / Propiedad colectiva", points: 10, recomendacion: "Excelencia: Propiedad común." }
         ]
     },
     {
         id: 35,
-        block: "Clientes",
-        question: "Ciberseguridad: ¿Protección del usuario?",
+        block: "Democracia y Transparencia",
+        question: "Cuentas Abiertas: ¿Saben los trabajadores cuánto dinero se gana de verdad y en qué se gasta la pasta la empresa?",
         options: [
-            { text: "Seguridad nula, si nos hackean ya veremos.", points: 0, recomendacion: "⚠️ Área Crítica: Negligencia en seguridad." },
-            { text: "Antivirus básico y poco más.", points: 3, recomendacion: "Seguridad básica." },
-            { text: "Auditoría de seguridad anual y formación al equipo.", points: 7, recomendacion: "Seguridad auditada." },
-            { text: "Cultura de seguridad proactiva: protegemos al cliente como a nosotros.", points: 10, recomendacion: "Cultura de seguridad." }
+            { text: "Ni de coña; eso es secreto de estado de la dirección y nadie más lo sabe", points: 0, recomendacion: "⚠️ Área Crítica: Opacidad." },
+            { text: "Nos dan un resumen anual que no se entera ni Dios", points: 3, recomendacion: "Mínimo." },
+            { text: "Los que quieren pueden ver las cuentas y se explica lo que se hace con el dinero", points: 7, recomendacion: "Transparencia." },
+            { text: "Todo está públicado y cualquiera puede ver los gastos en tiempo real", points: 10, recomendacion: "Excelencia: Transparencia radical." }
         ]
     },
     {
         id: 36,
-        block: "Clientes",
-        question: "Algoritmos: ¿Tienen sesgos?",
+        block: "Democracia y Transparencia",
+        question: "Sueldos Públicos: ¿Sabéis lo que cobráis?",
         options: [
-            { text: "Ni miramos si la IA tiene sesgos.", points: 0, recomendacion: "⚠️ Área Crítica: Ceguera algorítmica." },
-            { text: "Usamos lo que nos dan sin cuestionar.", points: 3, recomendacion: "Uso acrítico." },
-            { text: "Revisamos que no haya discriminación básica.", points: 7, recomendacion: "Revisión básica." },
-            { text: "Algoritmos éticos auditados contra sesgos de raza/género.", points: 10, recomendacion: "Algoritmos éticos." }
+            { text: "Tabú total", points: 0, recomendacion: "⚠️ Área Crítica: Secretismo." },
+            { text: "Rangos conocidos", points: 3, recomendacion: "Parcial." },
+            { text: "Conocimiento informal", points: 7, recomendacion: "Abierto." },
+            { text: "Sueldos públicos y transparentes", points: 10, recomendacion: "Excelencia: Claridad salarial." }
         ]
     },
-    // --- BLOQUE 7: IMPACTO ---
     {
         id: 37,
-        block: "Impacto",
-        question: "Impuestos: ¿Dónde tributáis?",
+        block: "Democracia y Transparencia",
+        question: "Gestión de Errores: ¿Honestidad?",
         options: [
-            { text: "Ingeniería fiscal para pagar lo mínimo fuera de aquí.", points: 0, recomendacion: "⚠️ Área Crítica: Elusión fiscal." },
-            { text: "Pagamos lo que toca porque no queda otra.", points: 3, recomendacion: "Cumplimiento forzoso." },
-            { text: "Evitamos deducciones dudosas para contribuir más.", points: 7, recomendacion: "Contribución responsable." },
-            { text: "Orgullo fiscal: pagamos con gusto donde generamos valor.", points: 10, recomendacion: "Orgullo fiscal." }
+            { text: "Se tapan", points: 0, recomendacion: "⚠️ Área Crítica: Miedo." },
+            { text: "Admitimos si nos pillan", points: 3, recomendacion: "Defensiva." },
+            { text: "Informe interno", points: 7, recomendacion: "Aprendizaje." },
+            { text: "Honestidad pública radical", points: 10, recomendacion: "Excelencia: Cultura del error." }
         ]
     },
     {
         id: 38,
-        block: "Impacto",
-        question: "Impacto Local: ¿Relación con el barrio?",
+        block: "Democracia y Transparencia",
+        question: "Marketing: ¿Verdad o Greenwashing?",
         options: [
-            { text: "Somos un vecino invisible en el barrio.", points: 0, recomendacion: "⚠️ Área Crítica: Aislamiento local." },
-            { text: "Damos algún donativo en Navidad.", points: 3, recomendacion: "Caridad puntual." },
-            { text: "Cedemos horas de nuestros técnicos a ONGs locales.", points: 7, recomendacion: "Voluntariado técnico." },
-            { text: "Implicación total: el barrio es parte de la empresa.", points: 10, recomendacion: "Implicación total." }
+            { text: "Greenwashing", points: 0, recomendacion: "⚠️ Área Crítica: Engaño." },
+            { text: "Exageración", points: 3, recomendacion: "Maquillaje." },
+            { text: "Hechos reales", points: 7, recomendacion: "Veracidad." },
+            { text: "Transparencia radical y ética", points: 10, recomendacion: "Excelencia: Comunicación ética." }
         ]
     },
     {
         id: 39,
-        block: "Impacto",
-        question: "Plan de Residuos Especiales: ¿Qué hacéis?",
+        block: "Democracia y Transparencia",
+        question: "Éxito Empresarial: ¿Qué es lo que más se celebra al final del año cuando se miran los resultados?",
         options: [
-            { text: "Los tóners y pilas van a la basura normal.", points: 0, recomendacion: "⚠️ Área Crítica: Gestión ilegal de residuos." },
-            { text: "Los llevamos a la tienda cuando nos acordamos.", points: 3, recomendacion: "Gestión esporádica." },
-            { text: "Tenemos puntos de recogida clara en la oficina.", points: 7, recomendacion: "Puntos de recogida." },
-            { text: "Gestión certificada y reducción activa de consumibles.", points: 10, recomendacion: "Gestión certificada." }
+            { text: "Solo dinero", points: 0, recomendacion: "⚠️ Área Crítica: Codicia." },
+            { text: "RSC(Ganar dinero, pero haciendo algunas acciones de caridad o quedar bien en redes para la foto)", points: 3, recomendacion: "Imagen." },
+            { text: "Triple balance(Que cuadren los números, que el equipo esté contento y que hayamos contaminado menos)", points: 7, recomendacion: "Sostenibilidad." },
+            { text: "Balance del Bien ComúnMejorar la vida de la gente y del entorno; el dinero es solo la herramienta para lograrlo", points: 10, recomendacion: "Excelencia: Bien Común." }
+        ]
+    },
+    {
+        id: 40,
+        block: "Democracia y Transparencia",
+        question: "Ciberseguridad: ¿Protección y Confianza?",
+        options: [
+            { text: "Nula", points: 0, recomendacion: "⚠️ Área Crítica: Negligencia." },
+            { text: "Antivirus básico", points: 3, recomendacion: "Básico." },
+            { text: "Auditorías", points: 7, recomendacion: "Seguridad." },
+            { text: "Cultura de seguridad proactiva", points: 10, recomendacion: "Excelencia: Confianza Digital." }
+        ]
+    },
+    {
+        id: 45,
+        block: "Democracia y Transparencia",
+        question: "Participación en el Propósito: ¿Ha participado la plantilla en la definición de los valores y objetivos de sostenibilidad de Verdnatura?",
+        options: [
+            { text: "Los valores los decide la dirección al 100%.", points: 0, recomendacion: "⚠️ Área Crítica: Imposición." },
+            { text: "Se han comunicado los valores después de redactarlos.", points: 3, recomendacion: "Comunicación." },
+            { text: "Se hicieron encuestas para conocer la opinión del equipo.", points: 7, recomendacion: "Consulta." },
+            { text: "Co-creación: Los valores se redactaron en talleres con todos los departamentos.", points: 10, recomendacion: "Excelencia: Propósito compartido." }
         ]
     }
 ];
@@ -507,75 +584,58 @@ const questions = [
 let currentQuestionIndex = 0;
 let totalScore = 0;
 let userRecommendations = [];
-let companyName = "";
+let fetchedAudits = []; // Store fetched audits globally
 
 document.addEventListener('DOMContentLoaded', () => {
     try {
         const quizContainer = document.getElementById('quiz-container');
         const resultsContainerCheck = document.querySelector('.charts-grid');
         const adviceContainerCheck = document.getElementById('advices-container');
+        const evolutionChartCheck = document.getElementById('evolutionChart'); // Direct check for chart canvas
 
+        // Logic for Single Company Flow - Verdnatura
         if (quizContainer) {
-            const prefill = sessionStorage.getItem('prefill_company');
-            if (prefill) {
-                companyName = prefill;
-                sessionStorage.removeItem('prefill_company');
-                currentQuestionIndex = 0;
-                totalScore = 0;
-                userRecommendations = [];
-                renderQuestion();
-            } else {
-                showStartScreen();
-            }
+            // Force reset for new audit
+            currentQuestionIndex = 0;
+            totalScore = 0;
+            userRecommendations = [];
+            ethicalRisk = false;
+            companyName = "Verdnatura"; // Ensure it is set
+            renderIntro();
         } else if (resultsContainerCheck || adviceContainerCheck) {
             checkAndRenderResults();
-        }
-
-        if (document.getElementById('evolutionChart')) {
+        } else if (evolutionChartCheck) {
+            console.log("Evolution page detected, initializing chart...");
             initEvolutionChart();
         }
+
     } catch (e) {
         console.error("Error in DOMContentLoaded:", e);
     }
 });
 
-function showStartScreen() {
-    const quizContainer = document.getElementById('quiz-container');
-    // Saneamiento HTML: asegurar sin espacios en etiquetas
-    quizContainer.innerHTML = `
-        <div class="quiz-card fade-in" id="start-screen" style="text-align: center;">
-            <i class="fas fa-clipboard-check" style="font-size: 4rem; color: #2e7d32; margin-bottom: 1.5rem;"></i>
-            <h2>Auditoría de Sostenibilidad EBC</h2>
-            <p style="margin-bottom: 2rem; color: #666;">Evalúa el impacto social y ambiental de tu empresa.</p>
-            <div class="input-group" style="margin-bottom: 2rem;">
-                <label style="display:block; margin-bottom:0.5rem; font-weight:bold;">Nombre de la Empresa:</label>
-                <input type="text" id="companyNameInput" placeholder="Nombre de tu empresa" class="form-input" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px;">
-            </div>
 
-            <button class="option-btn primary-btn" onclick="beginTest()" style="justify-content: center; width: 100%; background:#2e7d32; color:white;">
-                Comenzar Auditoría <i class="fas fa-arrow-right"></i>
+function renderIntro() {
+    const quizContainer = document.getElementById('quiz-container');
+    quizContainer.innerHTML = `
+        <div class="quiz-card fade-in" style="text-align: center; padding: 40px; border: 1px solid #e1e8ed; border-radius: 12px; max-width: 600px; margin: 40px auto; background-color: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+            <div style="font-size: 3.5rem; color: #2e7d32; margin-bottom: 25px;">
+                 <i class="fas fa-clipboard-check"></i>
+            </div>
+            <h2 style="margin-bottom: 20px; color: #2c3e50;">Evaluación de Sostenibilidad EBC</h2>
+            <p style="margin-bottom: 30px; font-size: 1.1rem; line-height: 1.6; color: #555;">
+                Analiza el impacto de tu empresa en 4 áreas clave: Dignidad Humana, Solidaridad, Sostenibilidad Ecológica y Justicia Social.
+            </p>
+            <button class="option-btn" onclick="startQuiz()" style="width: auto; padding: 12px 40px; font-size: 1.1rem; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 10px;">
+                Empezar Evaluación <i class="fas fa-arrow-right"></i>
             </button>
         </div>
     `;
 }
 
-window.beginTest = function () {
-    const input = document.getElementById('companyNameInput');
-    if (!input || !input.value.trim()) {
-        alert("Por favor, introduce el nombre de la empresa.");
-        return;
-    }
-    companyName = input.value.trim();
-
-    // Ocultar pantalla de inicio
-    const startScreen = document.getElementById('start-screen');
-    if (startScreen) startScreen.style.display = 'none';
-
-    currentQuestionIndex = 0;
-    totalScore = 0;
-    userRecommendations = [];
+window.startQuiz = function () {
     renderQuestion();
-};
+}
 
 function renderQuestion() {
     const quizContainer = document.getElementById('quiz-container');
@@ -585,7 +645,6 @@ function renderQuestion() {
     }
 
     const q = questions[currentQuestionIndex];
-    // Saneamiento HTML: asegurar sin espacios en etiquetas
     quizContainer.innerHTML = `
         <div class="quiz-card fade-in">
             <div class="quiz-header">
@@ -604,55 +663,149 @@ function renderQuestion() {
     `;
 }
 
+// --- PROFESSIONAL AUDIT REPORT DATA (Lookup Table) ---
+const auditReportData = {
+    1: { diagnosis: "Las naves tienen una superficie ideal para el autoconsumo.", action: "Si estás por debajo del 60%, amplía la instalación para cubrir el pico de consumo de las cámaras de frío durante el día." },
+    2: { diagnosis: "El frío es tu mayor gasto energético.", action: "Instala sensores IoT que regulen la temperatura según la carga real y asegúrate de que Odoo monitorice las aperturas de puertas para evitar fugas térmicas." },
+    3: { diagnosis: "Traer flores de tan lejos genera una huella de carbono masiva.", action: "Empieza a medir las toneladas de CO2 por envío y busca proyectos de reforestación en esas mismas zonas de Sudamérica para compensar el impacto del avión." },
+    4: { diagnosis: "Las rutas de reparto nacional son ineficientes si se hacen \"de cabeza\".", action: "Usa algoritmos de optimización de rutas para reducir kilómetros en vacío y ahorra un 15% de combustible inmediatamente." },
+    5: { diagnosis: "Tener servidores físicos gasta mucha luz en refrigeración.", action: "Implementa un diseño de \"pasillo frío/caliente\" en la sala de racks y aliméntalos directamente con la energía sobrante de las placas solares." },
+    6: { diagnosis: "El ERP debe servir para eliminar el papel, no solo para cambiar el programa.", action: "Equipa a todo el personal de almacén con tablets rugerizadas y elimina las impresoras de albaranes; el ahorro en papel y tóners será drástico." },
+    7: { diagnosis: "El plástico de burbujas es veneno para el entorno.", action: "Sustitúyelo por cartón nido de abeja o materiales compostables. Las flores preservadas no necesitan plástico para mantenerse frescas." },
+    8: { diagnosis: "Las mermas de flores son recursos, no basura.", action: "Crea una red con empresas de abono local o plantas de biogás para que tus flores muertas generen energía o fertilizante para el campo." },
+
+    // JUSTICE SOCIAL
+    9: { diagnosis: "⚠️ RIESGO ÉTICO MÁXIMO. Si compras flores baratas a costa de la explotación laboral en origen, penalizas -50 puntos.", action: "Exige certificados Fair Trade a tus proveedores de Sudamérica mañana mismo." },
+    10: { diagnosis: "⚠️ RIESGO ÉTICO MÁXIMO. Eludir impuestos destruye el suelo social. Penalización de -50 puntos.", action: "Publica tu contribución fiscal anual en la web como ejercicio de transparencia." },
+    11: { diagnosis: "Apretar al agricultor local por precio lo condena a desaparecer.", action: "Establece contratos a largo plazo con precios fijos que cubran sus costes de vida digna, independientemente de las fluctuaciones del mercado." },
+    12: { diagnosis: "Una brecha alta genera envidias y desunión.", action: "Ajusta los salarios para que el que más cobra no supere en más de 5 veces al que menos cobra (mozos o limpiadores)." },
+    13: { diagnosis: "Tu dinero en bancos tradicionales financia cosas que van en contra de tus valores.", action: "Mueve las cuentas corrientes a Banca Ética (Triodos o Fiare) para asegurar que tu liquidez apoya la economía real." },
+    14: { diagnosis: "El software puede ser racista o machista sin querer.", action: "Revisa los filtros de selección de Odoo para asegurar que no descartan a nadie por edad o sexo de forma automática." },
+    15: { diagnosis: "La lejía fuerte daña la salud de tus trabajadores de limpieza.", action: "Cambia todo el suministro a productos con etiqueta Ecolabel; limpian igual y no son tóxicos." },
+    16: { diagnosis: "El \"amiguismo\" mata el talento externo.", action: "Profesionaliza el departamento de RRHH y aplica procesos de selección basados puramente en competencias técnicas y valores." },
+
+    // SOLIDARITY
+    17: { diagnosis: "Comprar todo fuera debilita el tejido de tu ciudad.", action: "Busca proveedores de mantenimiento, suministros de oficina y uniformes en empresas de tu misma comarca." },
+    18: { diagnosis: "Pagar licencias caras a Microsoft es regalar dinero a una multi nacional.", action: "Aprovecha que usas Odoo para migrar la oficina a LibreOffice y sistemas abiertos; ganarás soberanía tecnológica." },
+    19: { diagnosis: "Ver a otros floristas solo como enemigos es un error.", action: "Lidera una asociación sectorial para compartir buenas prácticas de ahorro energético en cámaras frigoríficas." },
+    20: { diagnosis: "La empresa debe ser un buen vecino.", action: "Cede horas de tus expertos en logística o flores para ayudar a ONGs locales a organizar sus propios repartos o eventos." },
+    21: { diagnosis: "El café del office suele ser de baja calidad y explotación.", action: "Cambia el suministro de café y fruta a opciones 100% ecológicas y de comercio justo." },
+    22: { diagnosis: "Si todo el beneficio va al dueño, el equipo no se siente parte del éxito.", action: "Crea un sistema de reparto de beneficios anual (paga extra por objetivos de sostenibilidad) para toda la plantilla." },
+    23: { diagnosis: "Ayudar a un empleado en un apuro es solidaridad básica.", action: "Formaliza un fondo de préstamos sin interés para gastos imprevistos de los trabajadores (salud, vivienda)." },
+    24: { diagnosis: "Pagar a 180 días es asfixiar al pequeño.", action: "Paga al contado o a máximo 30 días. Tu buena salud financiera debe ayudar a la de tus proveedores." },
+
+    // HUMAN DIGNITY
+    25: { diagnosis: "Las lesiones de espalda son el mayor riesgo.", action: "Invierte en exoesqueletos ligeros o fajas de alta gama y haz talleres obligatorios de carga de cajas cada mes." },
+    26: { diagnosis: "La tecnología asusta si no se enseña bien.", action: "No des un manual PDF; pon a un mentor al lado de cada operario de almacén hasta que manejen la tablet con confianza y sin estrés." },
+    27: { diagnosis: "El personal de ruta tiene derecho a desconectar.", action: "Prohíbe por contrato los WhatsApps de trabajo fuera del horario de reparto, salvo emergencias reales de seguridad." },
+    28: { diagnosis: "El trabajador debe saber que vende algo que mejora el mundo.", action: "Explica a todos cómo la flor preservada ahorra agua y recursos comparada con la flor fresca. Crea orgullo de marca." },
+    29: { diagnosis: "Cumplir el convenio es lo mínimo, no es \"ser bueno\".", action: "Sube el salario base un 10% por encima de lo que marca la ley; la lealtad que ganarás vale mucho más." },
+    30: { diagnosis: "La diversidad por dinero (subvenciones) no es ética.", action: "Crea un plan de inclusión real donde los perfiles diversos tengan las mismas posibilidades de ascenso que el resto." },
+    31: { diagnosis: "Los datos de tus clientes son sagrados.", action: "Asegúrate de que Odoo no guarde más información de la necesaria y elimina datos antiguos de forma proactiva." },
+    32: { diagnosis: "Si no hay futuro, el talento se va.", action: "Publica todas las vacantes de oficina primero en el almacén; da la oportunidad de crecer a quien ya conoce el producto." },
+
+    // DEMOCRACY
+    33: { diagnosis: "El jefe no siempre tiene la razón.", action: "Implementa un sistema de votación para decidir las inversiones en bienestar (ej: ¿mejoramos el comedor o compramos sillas nuevas?)." },
+    34: { diagnosis: "La propiedad concentrada es el modelo viejo.", action: "Estudia convertir la empresa en una empresa participada donde los empleados más veteranos puedan comprar acciones." },
+    35: { diagnosis: "Si ocultas el beneficio, el equipo piensa que les engañas.", action: "Haz una asamblea cada tres meses y enseña los números reales de Odoo: ingresos, gastos y margen neto." },
+    36: { diagnosis: "El secreto salarial oculta la injusticia.", action: "Publica en la intranet los rangos salariales de cada puesto para que todos sepan qué necesitan para ganar más." },
+    37: { diagnosis: "Tápalo y se hará más grande.", action: "Si hay un vertido o un error ético, admítelo públicamente, explica por qué pasó y qué vas a hacer para que no se repita." },
+    38: { diagnosis: "El Greenwashing es un suicidio reputacional.", action: "No digas \"somos verdes\", di \"nuestras placas solares cubren el 42% del consumo\". Usa datos, no adjetivos." },
+    39: { diagnosis: "El dinero es el medio, el Bien Común es el fin.", action: "Empieza a medir el éxito por la felicidad del equipo y los kg de CO2 ahorrados, no solo por el balance bancario." },
+    40: { diagnosis: "Un hackeo pararía la logística y dañaría a clientes.", action: "Realiza auditorías de seguridad periódicas y forma a los mozos en detectar estafas digitales (Phishing)." },
+
+    // ADDITIONAL QUESTIONS
+    41: { diagnosis: "El agua es un recurso crítico en el sector floral.", action: "Instala contadores por sección para detectar fugas y estudia la recogida de aguas pluviales de la cubierta de la nave para la limpieza." },
+    42: { diagnosis: "El residuo de embalaje en logística es masivo.", action: "Implementa un sistema de depósito y retorno (SDDR) con tus clientes habituales para reutilizar las cajas de envío premium." },
+    43: { diagnosis: "El sector floral es muy estacional y genera mucha presión.", action: "Organiza sesiones de feedback después de cada campaña importante para mejorar los procesos y reducir la fatiga del equipo." },
+    44: { diagnosis: "Tu materia prima depende directamente de la salud de la biodiversidad.", action: "Instala colmenas o 'hoteles de insectos' en el entorno de la nave y patrocina la recuperación de flora autóctona en la comarca." },
+    45: { diagnosis: "Un propósito impuesto no genera compromiso real.", action: "Crea un 'Comité del Bien Común' formado por voluntarios de almacén, oficina y logística para revisar los objetivos de la empresa cada año." }
+};
+
+// Global Configuration
+
+
+// ... (questions array remains but is implicitly checked via ID/Index in render function)
+
 window.handleAnswer = function (optionIndex) {
     const q = questions[currentQuestionIndex];
     const selectedOption = q.options[optionIndex];
 
-    totalScore += selectedOption.points;
+    let points = selectedOption.points;
+    let feedback = selectedOption.recomendacion;
+
+    // Lógica de Penalización por Riesgo Crítico (-50 pts)
+    if (q.isCritical && points === 0) {
+        totalScore -= CRITICAL_PENALTY;
+        ethicalRisk = true;
+        feedback += " (PENALIZACIÓN: -50 PUNTOS POR RIESGO ÉTICO)";
+    } else {
+        totalScore += points;
+    }
+
     userRecommendations.push({
+        id: q.id, // Important: Save ID to link with auditReportData
         question: q.question,
         category: q.block,
         answer: selectedOption.text,
-        feedback: selectedOption.recomendacion || "Consultar guía EBC",
-        points: selectedOption.points
+        feedback: feedback,
+        points: points,
+        isCriticalFailure: (q.isCritical && points === 0) // Track specific failure
     });
 
     currentQuestionIndex++;
     renderQuestion();
 };
 
+
 async function finishQuiz() {
     const categoryScores = {
-        "Estrategia": 0, "Social": 0, "Ecología": 0,
-        "Justicia": 0, "Gobernanza": 0, "Clientes": 0, "Impacto": 0
+        "Dignidad Humana": 0,
+        "Solidaridad": 0,
+        "Sostenibilidad Ecológica": 0,
+        "Justicia Social": 0,
+        "Democracia y Transparencia": 0
     };
 
     userRecommendations.forEach(rec => {
         if (categoryScores[rec.category] !== undefined) categoryScores[rec.category] += rec.points;
     });
 
-    // Validar que hay nombre de empresa (por si acaso)
-    if (!companyName) companyName = "Anónimo";
 
-    // Feedback Visual: Guardando...
+    // CALCULATION LOGIC FOR 1000 POINTS
+    // Max theoretical score per question = 10
+    // Total questions = 45 (Updated)
+    // Max raw score = 450
+    // Normalization factor = 1000 / 450 = 2.222...
+    const MAX_RAW_SCORE = 450;
+    const NORMALIZATION_FACTOR = 1000 / 450;
+
+    let normalizedScore = Math.round(totalScore * NORMALIZATION_FACTOR);
+
+    // Apply limits (optional, but good for safety)
+    if (normalizedScore > 1000) normalizedScore = 1000;
+    // Allow negative scores if penalties exceed points, or cap at 0? 
+    // EBC allows negative, so we keep it, but maybe cap at -1000? 
+    // Let's stick to raw calculation.
+
     const quizContainer = document.getElementById('quiz-container');
     if (quizContainer) {
         quizContainer.innerHTML = `
             <div class="quiz-card fade-in" style="text-align:center;">
                 <i class="fas fa-cloud-upload-alt" style="font-size: 4rem; color: #2e7d32; margin-bottom: 1.5rem;"></i>
-                <h2>Guardando resultados en la nube...</h2>
+                <h2>Guardando resultados...</h2>
                 <div class="spinner" style="border: 4px solid #f3f3f3; border-top: 4px solid #2e7d32; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto;"></div>
-                <p>Por favor espera un momento.</p>
             </div>
             <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
         `;
     }
 
-    // Preparar objeto resultados
     const resultadosJSON = {
         categoryScores: categoryScores,
         recommendations: userRecommendations,
-        totalScore: totalScore
+        totalScore: totalScore, // Keep raw for reference if needed
+        normalizedScore: normalizedScore, // MAIN SCORE
+        ethicalRisk: ethicalRisk
     };
 
     try {
@@ -661,8 +814,8 @@ async function finishQuiz() {
             .from('auditorias')
             .insert([
                 {
-                    empresa: companyName,
-                    puntos: Math.round(totalScore),
+                    empresa: companyName, // "Verdnatura"
+                    puntos: normalizedScore, // Save NORMALIZED score
                     detalles: resultadosJSON,
                     fecha: new Date().toISOString()
                 },
@@ -670,104 +823,261 @@ async function finishQuiz() {
 
         if (error) throw error;
 
-        // Save active results for immediate rendering (keep this for session persistence)
+        // Save to Session Storage for Results Page
         sessionStorage.setItem('active_results', JSON.stringify({
             company: companyName,
-            score: totalScore,
+            score: normalizedScore, // Save NORMALIZED score
             categoryScores: categoryScores,
             recommendations: userRecommendations,
+            ethicalRisk: ethicalRisk,
             timestamp: Date.now()
         }));
 
         window.location.href = 'resultados.html';
 
     } catch (err) {
-        console.error("Error guardando en Supabase:", err);
-        alert("Error Supabase: " + (err.message || err) + "\nSe guardarán localmente.");
-
-        // Fallback localstorage (opcional, pero buena práctica)
-        const historyEntry = {
-            date: new Date().toLocaleDateString(),
-            timestamp: Date.now(),
-            companyName: companyName,
-            totalScore: totalScore,
-            blockScores: categoryScores,
-            savedRecommendations: userRecommendations
-        };
-        const history = JSON.parse(localStorage.getItem('ebcAuditHistory')) || [];
-        history.push(historyEntry);
-        localStorage.setItem('ebcAuditHistory', JSON.stringify(history));
-
+        console.error("Error guardando:", err);
+        // Fallback Local
         sessionStorage.setItem('active_results', JSON.stringify({
             company: companyName,
-            score: totalScore,
+            score: normalizedScore, // Save NORMALIZED score
             categoryScores: categoryScores,
             recommendations: userRecommendations,
+            ethicalRisk: ethicalRisk,
             timestamp: Date.now()
         }));
-
         window.location.href = 'resultados.html';
     }
 }
 
 function checkAndRenderResults() {
     const data = JSON.parse(sessionStorage.getItem('active_results'));
-
-    // Ensure we are on the results page or recommendations page
     const resultsContainer = document.querySelector('.charts-grid');
     const adviceContainer = document.getElementById('advices-container');
 
     if (!resultsContainer && !adviceContainer) return;
 
+    // No Data State
     if (!data) {
         const container = resultsContainer || adviceContainer;
         if (container) {
-            container.innerHTML = `<div class="card" style="text-align:center; padding:50px;">
+            container.innerHTML = '';
+            const noDataCard = document.createElement('div');
+            noDataCard.className = 'card fade-in no-data-card';
+            noDataCard.innerHTML = `
+                <i class="fas fa-clipboard-list"></i>
                 <h2>No hay datos activos</h2>
-                <p>Realiza un test o carga uno desde el historial.</p>
-                <a href="auditoria.html" class="option-btn" style="display:inline-block; margin-top:1rem;">Ir a la Auditoría</a>
-             </div>`;
+                <p>Realiza una nueva auditoría o selecciona una del historial.</p>
+                <div style="display: flex; gap: 1rem; justify-content: center;">
+                    <a href="auditoria.html" class="option-btn primary-btn" style="text-decoration:none;">
+                        <i class="fas fa-play"></i> Nueva Auditoría
+                    </a>
+                    <a href="evolucion.html" class="option-btn" style="text-decoration:none; display:inline-flex; align-items:center; gap:8px;">
+                        <i class="fas fa-history"></i> Ir al Historial
+                    </a>
+                </div>
+            `;
+            container.appendChild(noDataCard);
         }
         return;
     }
 
     if (resultsContainer) {
-        // Render Score Card
         renderScoreCard(data, resultsContainer);
-        // Render Radar Chart
         renderRadarChart(data);
+        renderStrategicRoadmap(data, resultsContainer); // New Roadmap
     }
-
     if (adviceContainer) {
-        renderAccordion(data);
+        // Add header for Detailed Analysis
+        if (!document.getElementById('details-header')) {
+            const header = document.createElement('h3');
+            header.id = 'details-header';
+            header.className = 'fade-in';
+            header.style.textAlign = 'center';
+            header.style.marginBottom = '20px';
+            header.style.color = '#2c3e50';
+            header.textContent = 'Análisis Técnico Completo';
+            adviceContainer.parentNode.insertBefore(header, adviceContainer);
+        }
+        renderFullRecommendations(data);
     }
 }
 
-function renderScoreCard(data, container) {
-    // Determine max score (39 questions * 10 points = 390)
-    const maxScore = 390;
-    const percentage = Math.round((data.score / maxScore) * 100);
-
-    let colorClass = 'score-bad'; // Default red
-    let statusText = 'Mejorable';
-    let colorHex = '#e74c3c';
-
-    if (percentage >= 75) {
-        colorClass = 'score-good';
-        statusText = 'Excelente';
-        colorHex = '#2ecc71';
-    } else if (percentage >= 40) {
-        colorClass = 'score-mid';
-        statusText = 'En Proceso';
-        colorHex = '#f39c12';
-    }
-
-    // Clear loading message
+// --- PROFESSIONAL EXECUTIVE REPORT ENGINE (UPDATED TO USER CSS) ---
+function renderFullRecommendations(data) {
+    const container = document.getElementById('advices-container');
+    if (!container) return;
     container.innerHTML = '';
 
-    // Create Score Card
+    // Create Report Container
+    const reportWrapper = document.createElement('div');
+    reportWrapper.className = 'accordion-container fade-in';
+    container.appendChild(reportWrapper);
+
+    const categories = [
+        "Sostenibilidad Ecológica",
+        "Justicia Social",
+        "Solidaridad",
+        "Dignidad Humana",
+        "Democracia y Transparencia"
+    ];
+
+    categories.forEach(cat => {
+        const catScore = data.categoryScores[cat] || 0;
+        const maxCatScore = 80;
+        const percentage = Math.round((catScore / maxCatScore) * 100);
+
+        let statusText = "EN TRANSICIÓN";
+        let statusClass = "status-average";
+        let badgeColor = "#f39c12";
+
+        if (percentage >= 80) {
+            statusText = "EXCELENTE";
+            statusClass = "status-excellent";
+            badgeColor = "#2ecc71";
+        } else if (percentage < 30) {
+            statusText = "ÁREA CRÍTICA";
+            statusClass = "status-critical";
+            badgeColor = "#e74c3c";
+        }
+
+        // Critical Risk Check (-50 pts)
+        const blockRecs = data.recommendations.filter(r => r.category === cat);
+        const hasCriticalFailure = blockRecs.some(r => r.isCriticalFailure);
+
+        // Structure for Header
+        // .accordion-header has status class for left border color
+        let headerClass = `accordion-header ${statusClass}`;
+
+        // Critical Alert Content (Inline)
+        let alertHTML = "";
+        if (hasCriticalFailure) {
+            alertHTML = `
+                <div class="inline-critical-alert">
+                    <i class="fas fa-radiation alert-icon-inline"></i>
+                    <div class="alert-content-inline">
+                        <h4>RIESGO ÉTICO DETECTADO (-50 Pts)</h4>
+                        <p>Se ha detectado una violación flagrante de los principios EBC (Dumping o Evasión Fiscal).</p>
+                        <div class="alert-action-inline">CORREGIR INMEDIATAMENTE</div>
+                    </div>
+                </div>
+            `;
+            headerClass = "accordion-header status-critical"; // Force critical style
+        }
+
+        const item = document.createElement('div');
+        item.className = 'accordion-item';
+
+        item.innerHTML = `
+            <div class="${headerClass}" onclick="toggleReportCard(this)">
+                <div class="header-content">
+                    <span class="block-title">${cat}</span>
+                    <span class="score-badge" style="background-color: ${badgeColor};">${percentage}% ${statusText}</span>
+                </div>
+                <i class="fas fa-chevron-down accordion-icon"></i>
+            </div>
+            
+            <div class="accordion-content">
+                <div class="accordion-body-padding">
+                    ${alertHTML}
+                    ${renderBlockQuestions(blockRecs)}
+                </div>
+            </div>
+        `;
+        reportWrapper.appendChild(item);
+    });
+}
+
+function renderBlockQuestions(userRecs) {
+    return userRecs.map(r => {
+        let reportItem = null;
+        if (r.id && auditReportData[r.id]) {
+            reportItem = auditReportData[r.id];
+        } else {
+            const qObj = questions.find(q => q.question === r.question);
+            if (qObj) reportItem = auditReportData[qObj.id];
+        }
+
+        const actionText = reportItem ? reportItem.action : "Revisar políticas internas.";
+
+        // Determine points color for badge
+        let badgeColor = "#f39c12";
+        if (r.points >= 7) badgeColor = "#2ecc71";
+        if (r.points === 0) badgeColor = "#e74c3c";
+
+        return `
+            <div class="rec-item">
+                <span class="rec-question">${r.question}</span>
+                
+                <div class="rec-meta">
+                    <p class="rec-answer">Tu respuesta: ${r.answer}</p>
+                    <span class="rec-points-badge" style="color:${badgeColor}">${r.points} pts</span>
+                </div>
+
+                <div class="rec-feedback-box">
+                    <i class="fas fa-lightbulb"></i>
+                    <span>${actionText}</span>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+window.toggleReportCard = function (header) {
+    header.classList.toggle('active');
+    const content = header.nextElementSibling;
+    if (header.classList.contains('active')) {
+        content.style.maxHeight = content.scrollHeight + "px";
+    } else {
+        content.style.maxHeight = "0";
+    }
+};
+
+function renderScoreCard(data, container) {
+    const maxScore = 1000;
+    // data.score is already normalized to 1000
+
+    let colorClass = 'score-mid';
+    let statusText = 'En Progreso';
+    let colorHex = '#f39c12';
+
+    if (data.score >= 751) {
+        statusText = 'Excelente: Semilla del Bien Común';
+        colorHex = '#2ecc71';
+    } else if (data.score >= 401) {
+        statusText = 'En Transición';
+        colorHex = '#f39c12';
+    } else {
+        statusText = 'Área Crítica';
+        colorHex = '#e74c3c';
+    }
+
+    // SDG Logic (High scores >= 7 in categories)
+    const sdgMap = {
+        "Sostenibilidad Ecológica": { id: 13, icon: "fas fa-globe-americas", color: "#3F7E44", title: "Acción por el Clima" },
+        "Dignidad Humana": { id: 8, icon: "fas fa-briefcase", color: "#A21942", title: "Trabajo Decente" },
+        "Justicia Social": { id: 10, icon: "fas fa-balance-scale", color: "#DD1367", title: "Reducción de Desigualdades" },
+        "Solidaridad": { id: 12, icon: "fas fa-hands-helping", color: "#CF8D2A", title: "Producción Responsable" },
+        "Democracia y Transparencia": { id: 16, icon: "fas fa-gavel", color: "#00689D", title: "Paz y Justicia" }
+    };
+
+    let earnedSDGs = [];
+    for (const [category, score] of Object.entries(data.categoryScores)) {
+        const catMaxRef = 80; // Approx max
+        if ((score / catMaxRef) * 100 >= 50) { // Threshold for "Working on it" -> 50%? Or user said "Good answers (7 or 10)". 
+            // Let's use > 0 to show what they are working on, or > 50% for achievement.
+            // User prompt: "puntuaciones de 7 o 10". Category score is sum. 
+            // Let's stick to categories with reasonable performance > 40% (Transition)
+            if (sdgMap[category]) earnedSDGs.push(sdgMap[category]);
+        }
+    }
+    // Optimization: Unique SDGs
+    earnedSDGs = [...new Set(earnedSDGs)];
+
+    container.innerHTML = '';
+
     const scoreCard = document.createElement('div');
-    scoreCard.className = 'card';
+    scoreCard.className = 'card fade-in';
     scoreCard.style.textAlign = 'center';
     scoreCard.style.borderTop = `5px solid ${colorHex}`;
     scoreCard.innerHTML = `
@@ -775,13 +1085,30 @@ function renderScoreCard(data, container) {
         <div style="font-size:3.5rem; font-weight:800; color:${colorHex}; margin:10px 0;">
             ${data.score} <span style="font-size:1.5rem; color:#7f8c8d;">/ ${maxScore}</span>
         </div>
-        <p style="font-size:1.2rem; font-weight:bold; color:${colorHex}">${statusText} (${percentage}%)</p>
+        <p style="font-size:1.2rem; font-weight:bold; color:${colorHex}">${statusText}</p>
+        
+        ${earnedSDGs.length > 0 ? `
+        <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee;">
+            <p style="font-size: 0.9rem; color: #666; margin-bottom: 10px;">Contribución a los ODS:</p>
+            <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+                ${earnedSDGs.map(sdg => `
+                    <div style="display: flex; flex-direction: column; align-items: center; width: 60px; cursor: help;" title="${sdg.title}">
+                        <div style="width: 45px; height: 45px; border-radius: 8px; background-color: ${sdg.color}; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem; margin-bottom: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                            <i class="${sdg.icon}"></i>
+                        </div>
+                        <span style="font-size: 0.65rem; color: #555; line-height: 1.1;">ODS ${sdg.id}</span>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+        ` : ''}
+
+        ${data.ethicalRisk ? '<p style="color:#c0392b; font-weight:bold; margin-top:10px;"><i class="fas fa-exclamation-circle"></i> Penalización por prácticas críticas detectada.</p>' : ''}
     `;
     container.appendChild(scoreCard);
 
-    // Create Radar Chart Container
     const chartCard = document.createElement('div');
-    chartCard.className = 'card';
+    chartCard.className = 'card fade-in';
     chartCard.innerHTML = `
         <h3>Matriz del Bien Común</h3>
         <div style="position: relative; height: 400px; width: 100%;">
@@ -790,14 +1117,13 @@ function renderScoreCard(data, container) {
     `;
     container.appendChild(chartCard);
 
-    // Link to full recommendations
     const linkCard = document.createElement('div');
-    linkCard.className = 'card';
+    linkCard.className = 'card fade-in';
     linkCard.style.textAlign = 'center';
     linkCard.innerHTML = `
-        <h3>¿Cómo mejorar?</h3>
-        <p>Descubre acciones concretas para cada área.</p>
-        <a href="recomendaciones.html" class="option-btn primary-btn" style="margin-top:1rem; display:inline-flex;">Ver Plan de Acción</a>
+        <h3>Plan de Acción</h3>
+        <p>Descubre cómo mejorar en los 5 ejes.</p>
+        <a href="recomendaciones.html" class="option-btn primary-btn" style="margin-top:1rem; display:inline-flex;">Ver Recomendaciones</a>
     `;
     container.appendChild(linkCard);
 }
@@ -806,29 +1132,25 @@ function renderRadarChart(data) {
     const ctx = document.getElementById('radarChart');
     if (!ctx) return;
 
-    // Destroy existing chart if any
     if (window.myRadarChart instanceof Chart) {
         window.myRadarChart.destroy();
     }
 
-    // Prepare data, handling missing/zero values safely
     const categories = [
-        "Estrategia", "Social", "Ecología",
-        "Justicia", "Gobernanza", "Clientes", "Impacto"
+        "Dignidad Humana",
+        "Solidaridad",
+        "Sostenibilidad Ecológica",
+        "Justicia Social",
+        "Democracia y Transparencia"
     ];
 
-    // Max scores per block based on question count:
-    // Estrategia (6q): 60, Social (7q): 70, Ecología (8q): 80, Justicia (7q): 70
-    // Gobernanza (6q): 60, Clientes (3q): 30, Impacto (3q): 30
-    const blockMax = {
-        "Estrategia": 60, "Social": 70, "Ecología": 80,
-        "Justicia": 70, "Gobernanza": 50, "Clientes": 30, "Impacto": 30
-    };
+    // Convert raw category scores to Percentage (0-100)
+    // Max raw score per category is approx 8 questions * 10 points = 80
+    const categoryMaxRaw = 80;
 
-    const dataset = categories.map(cat => {
-        const score = data.categoryScores[cat] || 0;
-        const max = blockMax[cat] || 60;
-        return Math.round((score / max) * 100);
+    const scores = categories.map(cat => {
+        const rawScore = data.categoryScores[cat] || 0;
+        return Math.round((rawScore / categoryMaxRaw) * 100);
     });
 
     window.myRadarChart = new Chart(ctx, {
@@ -837,20 +1159,19 @@ function renderRadarChart(data) {
             labels: categories,
             datasets: [{
                 label: '% Cumplimiento EBC',
-                data: dataset,
-                backgroundColor: 'rgba(46, 204, 113, 0.2)',
-                borderColor: '#2ecc71',
-                pointBackgroundColor: '#27ae60',
+                data: scores,
+                backgroundColor: 'rgba(46, 125, 50, 0.2)',
+                borderColor: 'rgba(46, 125, 50, 1)',
+                pointBackgroundColor: 'rgba(46, 125, 50, 1)',
                 borderWidth: 2
             }]
         },
         options: {
             scales: {
                 r: {
-                    angleLines: { display: true },
-                    suggestedMin: 0,
-                    suggestedMax: 100,
-                    ticks: { backdropColor: 'transparent' }
+                    min: 0,
+                    max: 100,
+                    ticks: { display: false }
                 }
             },
             responsive: true,
@@ -859,444 +1180,186 @@ function renderRadarChart(data) {
     });
 }
 
-// --- SECTOR FEEDBACK DATA ---
-const sectorFeedback = {
-    "Estrategia": {
-        low: "⚠️ Área Crítica: Adicción al Crecimiento. Estás operando en un modelo de 'avión que no sabe aterrizar'. Tu éxito depende de un crecimiento infinito que choca con los límites del planeta. Acción: Adopta el Modelo Donut, define qué es 'suficiente' para tu empresa y deja de medir solo el beneficio.",
-        mid: "En Transición. Tienes conciencia, pero falta estructura. Acción: Pasa de las 'buenas intenciones' a un Plan SMART EBC con objetivos medibles a 3 años que incluyan límites ecológicos reales.",
-        high: "Referente Estratégico. Entiendes la prosperidad en equilibrio. Acción: Sirve de mentor para otras empresas del sector y lidera la transición hacia el post-crecimiento."
-    },
-    "Social": {
-        low: "⚠️ Área Crítica: Modelo Vertical y Desigual. Tu empresa es una dictadura donde el talento se quema. Brechas salariales altas y falta de participación matan la motivación. Acción: Reduce la brecha a menos de 1:5, respeta la desconexión digital y deja que el equipo empiece a decidir.",
-        mid: "Empresa Humana en Proceso. Cuidas a la gente pero de forma paternalista. Acción: Pasa de 'escuchar' a 'dar poder'. Implementa democracia interna real y transparencia salarial total.",
-        high: "Líder en Justicia Social. Tu equipo es tu socio, no tu recurso. Acción: Mantén la cultura de transparencia radical y sigue invirtiendo en ergonomía y salud integral."
-    },
-    "Ecología": {
-        low: "⚠️ Área Crítica: Despilfarro Digital. Tu código es 'Software Inflado' y tu hardware es basura en potencia. Estás fundiendo recursos innecesarios. Acción: Audita tus kWh, limpia tu código de librerías inútiles y deja de comprar hardware nuevo por defecto.",
-        mid: "TIC en Transición Verde. Tienes buenas prácticas (modo oscuro, reciclaje), pero falta eficiencia profunda. Acción: Pasa a un Cloud 100% renovable y prioriza el hardware reacondicionado (Refurbished) sobre el nuevo.",
-        high: "Maestro del Green IT. Minimizas el impacto por byte. Acción: Implementa el 'Derecho a Reparar' como norma de empresa y optimiza tu infraestructura para que sea regenerativa."
-    },
-    "Justicia": {
-        low: "⚠️ Área Crítica: Cómplice de Dumping Ético. Tu ahorro se basa en la explotación ajena o en banca que financia armas/fósiles. Acción: Cierra tus cuentas en banca especulativa, pásate a la Banca Ética y audita hoy mismo a tus proveedores de hardware.",
-        mid: "Comprador Responsable. Miras etiquetas pero el precio sigue mandando demasiado. Acción: Prioriza la proximidad (KM 0) y el Software Libre para ganar soberanía tecnológica y social.",
-        high: "Soberanía y Ética Total. Tu cadena de suministro es limpia y coherente. Acción: Fomenta alianzas con otras cooperativas y empresas EBC para crear un mercado local fuerte."
-    },
-    "Gobernanza": {
-        low: "⚠️ Área Crítica: Caja Negra. Tu empresa es opaca y genera desconfianza. El secreto salarial y financiero es una barrera para la sostenibilidad. Acción: Abre los libros financieros al equipo y admite los errores ambientales con honestidad radical.",
-        mid: "Transparencia Moderada. Informas pero no involucras. Acción: Publica los sueldos internamente y permite que la propiedad de la empresa sea compartida con los empleados.",
-        high: "Gobernanza Democrática. Eres una organización madura y transparente. Acción: Implementa marketing honesto basado en datos reales para evitar cualquier sombra de Greenwashing."
-    },
-    "Clientes": {
-        low: "⚠️ Área Crítica: Manipulación Digital. Usas 'Dark Patterns' y mercadeas con datos. Eso erosiona la dignidad del cliente. Acción: Elimina los trucos psicológicos de venta y aplica 'Privacidad por Diseño' inmediatamente.",
-        mid: "Respeto Digital Básico. Cumples la ley pero no vas más allá. Acción: Audita tus algoritmos contra sesgos de género/raza y refuerza la ciberseguridad proactiva.",
-        high: "Guardián de la Ética Digital. Proteges al usuario como a ti mismo. Acción: Lidera el debate sobre IAs éticas y soberanía de datos en tu comunidad técnica."
-    },
-    "Impacto": {
-        low: "⚠️ Área Crítica: Vecino Invisible / Economía Lineal. Generas residuos tóxicos (RAEE) sin control y no aportas nada a tu barrio. Acción: Gestiona tus tóners y cables con certificados oficiales y empieza a pagar impuestos con orgullo local.",
-        mid: "Colaborador Social. Ayudas puntualmente pero no estás integrado. Acción: Cede horas de tus técnicos para proyectos sociales locales y elimina al 100% los plásticos de un solo uso.",
-        high: "Activo Comunitario. Tu empresa mejora el barrio y el entorno. Acción: Implementa un plan de residuos cero y colabora en la creación de redes de economía social locales."
-    }
-};
+// (Function removed: renderAccordion - Legacy code)
 
-function renderAccordion(data) {
-    const container = document.getElementById('advices-container');
-    if (!container) return;
+// --- STRATEGIC ROADMAP ENGINE ---
+function renderStrategicRoadmap(data, container) {
+    // 1. Filter for urgent actions (0 or 3 points)
+    const urgentActions = data.recommendations.filter(r => r.points <= 3);
 
-    container.innerHTML = ''; // Clear previous content
+    // 2. Sort by urgency (0 points first)
+    urgentActions.sort((a, b) => a.points - b.points);
 
-    const categories = [
-        "Estrategia", "Social", "Ecología",
-        "Justicia", "Gobernanza", "Clientes", "Impacto"
-    ];
+    // 3. Take top 10
+    const topActions = urgentActions.slice(0, 10);
 
-    const blockMax = {
-        "Estrategia": 60, "Social": 70, "Ecología": 80,
-        "Justicia": 70, "Gobernanza": 50, "Clientes": 30, "Impacto": 30
-    };
+    if (topActions.length === 0) return;
 
-    const sectorIcons = {
-        "Estrategia": "fa-chess",
-        "Social": "fa-users",
-        "Ecología": "fa-leaf",
-        "Justicia": "fa-scale-balanced",
-        "Gobernanza": "fa-landmark",
-        "Clientes": "fa-user-shield",
-        "Impacto": "fa-globe"
-    };
-
-    categories.forEach(cat => {
-        const score = data.categoryScores[cat] || 0;
-        const max = blockMax[cat] || 1; // avoid div by zero
-        const percent = Math.round((score / max) * 100);
-
-        let feedbackText = "";
-        let statusClass = "";
-        let statusLabel = "";
-        let colorHex = ""; // Still used for inline styles if needed, but CSS classes handle most
-
-        if (percent < 40) {
-            feedbackText = sectorFeedback[cat].low;
-            statusClass = "recommendation-critical";
-            statusLabel = "ÁREA CRÍTICA";
-            colorHex = "#e74c3c";
-        } else if (percent < 75) {
-            feedbackText = sectorFeedback[cat].mid;
-            statusClass = "recommendation-warning";
-            statusLabel = "EN TRANSICIÓN";
-            colorHex = "#f39c12";
+    const roadmapCard = document.createElement('div');
+    roadmapCard.className = 'card fade-in';
+    roadmapCard.innerHTML = `
+        <h3 style="color: #2c3e50; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 20px;">
+            <i class="fas fa-map-signs" style="color: #f39c12; margin-right: 10px;"></i>
+            Hoja de Ruta Estratégica
+        </h3>
+        <ul style="list-style: none; padding: 0;">
+            ${topActions.map(item => {
+        let reportItem = null;
+        if (item.id && auditReportData[item.id]) {
+            reportItem = auditReportData[item.id];
         } else {
-            feedbackText = sectorFeedback[cat].high;
-            statusClass = "recommendation-good";
-            statusLabel = "EXCELENTE";
-            colorHex = "#2ecc71";
+            const qObj = questions.find(q => q.question === item.question);
+            if (qObj) reportItem = auditReportData[qObj.id];
         }
+        const actionText = reportItem ? reportItem.action : "Revisar proceso interno.";
 
-        // Split Diagnosis vs Action
-        // We assume structure "Text. Acción: Text."
-        const parts = feedbackText.split("Acción:");
-        const diagnosisText = parts[0] ? parts[0].trim() : feedbackText;
-        const actionText = parts.length > 1 ? parts[1].trim() : "Revisa la guía de la Economía del Bien Común para más detalles.";
-
-        // Get details for this sector
-        // userRecommendations has { category, question, answer, points ... }
-        // We need to access global userRecommendations or passed data.
-        // Passed 'data' has 'recommendations' array!
-        // data.recommendations is accurate from loadAudit or finishQuiz
-        const sectorDetails = (data.recommendations || []).filter(r => r.category === cat);
-
-        const detailsHtml = sectorDetails.length > 0
-            ? sectorDetails.map(d => `
-                <div class="detail-item">
-                    <span class="detail-question">${d.question || 'Pregunta no disponible'}</span>
-                    <span class="detail-answer"><i class="fas fa-check-circle" style="color:${colorHex}"></i> ${d.answer || '-'}</span>
-                    <div class="detail-points">Puntos obtenidos: <span class="rec-points-badge">${d.points}</span></div>
-                </div>
-            `).join('')
-            : '<p>No hay respuestas registradas para este sector.</p>';
-
-        const card = document.createElement('div');
-        card.className = `recommendation-card fade-in ${statusClass}`;
-        // Border left color is handled by CSS class now, but inline style ensures dynamic color override if needed
-        card.style.borderLeftColor = colorHex;
-
-        card.innerHTML = `
-            <div class="rec-header">
-                <div class="rec-title-group">
-                    <div class="rec-icon" style="color:${colorHex}">
-                        <i class="fas ${sectorIcons[cat] || 'fa-info-circle'}"></i>
-                    </div>
-                    <div class="rec-title-text">
-                        <h3>${cat}</h3>
-                        <span class="rec-badge" style="background-color:${colorHex}20; color:${colorHex}">${statusLabel}</span>
-                    </div>
-                </div>
-                <div class="rec-score-circle" style="background-color:${colorHex}">
-                    ${percent}%
-                </div>
-            </div>
-
-            <div class="rec-body">
-                <div class="rec-diagnosis">
-                    <span class="rec-label" style="color:${colorHex}">DIAGNÓSTICO</span>
-                    <p>${diagnosisText}</p>
-                </div>
-                <div class="rec-action-plan" style="border-left-color:${colorHex}">
-                    <span class="rec-label" style="color:${colorHex}">PLAN DE ACCIÓN</span>
-                    <p><strong><i class="fas fa-arrow-right"></i></strong> ${actionText}</p>
-                </div>
-            </div>
-
-            <div class="rec-footer">
-                <button class="toggle-details-btn" onclick="toggleDetails('details-${cat}')" style="color:${colorHex}">
-                    Ver mis respuestas en este sector <i class="fas fa-chevron-down"></i>
-                </button>
-                <div id="details-${cat}" class="rec-details-content" style="display:none;">
-                    ${detailsHtml}
-                </div>
-            </div>
-        `;
-
-        container.appendChild(card);
-    });
+        return `
+                <li style="margin-bottom: 15px; display: flex; align-items: flex-start; gap: 10px; font-size: 1.05rem; color: #444;">
+                    <span style="color: #e74c3c; font-weight: bold; font-size: 1.2rem;">➔</span>
+                    <span>${actionText}</span>
+                </li>
+                `;
+    }).join('')}
+        </ul>
+        <div style="margin-top: 20px; padding-top: 15px; border-top: 1px dashed #ddd; text-align: center; font-size: 0.9rem; color: #777;">
+            * Estas son las acciones prioritarias para mejorar tu impacto inmediato.
+        </div>
+    `;
+    container.appendChild(roadmapCard);
 }
 
-// Global function for accordion toggle
-window.toggleDetails = function (id) {
-    const el = document.getElementById(id);
-    if (el) {
-        const isHidden = el.style.display === "none";
-        el.style.display = isHidden ? "block" : "none";
-        // Rotate icon logic optional
-        const btn = event.currentTarget;
-        const icon = btn.querySelector('.fa-chevron-down') || btn.querySelector('.fa-chevron-up');
-        if (icon) {
-            icon.className = isHidden ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
-        }
-    }
-};
-
-// --- HISTORY & EVOLUTION CHART LOGIC (SUPABASE) ---
+// --- EVOLUTION / HISTORY LOGIC ---
 
 async function initEvolutionChart() {
-    // Solo ejecutar si estamos en la página de evolución
-    const selector = document.getElementById('companySelector');
-    if (!selector) return;
-
-    try {
-        if (!supabaseClient) throw new Error("Supabase client is not initialized.");
-        // 1. Obtener empresas únicas de Supabase
-        const { data, error } = await supabaseClient
-            .from('auditorias')
-            .select('empresa');
-
-        if (error) throw error;
-
-        // Extraer nombres únicos
-        const companies = [...new Set(data.map(item => item.empresa))];
-
-        selector.innerHTML = '<option value="">Selecciona una empresa...</option>';
-
-        if (companies.length === 0) {
-            const resultCard = document.querySelector('.card h3').parentNode; // Parent of "Progreso Histórico"
-            if (resultCard && !resultCard.innerHTML.includes('No hay auditorías registradas')) {
-                resultCard.innerHTML += '<p>No hay auditorías registradas en la nube.</p>';
-            }
-            return;
-        }
-
-        // Mantener la opción "Ver todas" y añadir las empresas
-        selector.innerHTML = '<option value="all">Ver todas</option>';
-
-        if (companies.length === 0) {
-            const resultCard = document.querySelector('.card h3').parentNode;
-            if (resultCard && !resultCard.innerHTML.includes('No hay auditorías registradas')) {
-                resultCard.innerHTML += '<p>No hay auditorías registradas en la nube.</p>';
-            }
-            // Aún así permitimos 'all' para limpiar la UI si no hay nada
-        }
-
-        companies.forEach(company => {
-            const option = document.createElement('option');
-            option.value = company;
-            option.textContent = company;
-            selector.appendChild(option);
-        });
-
-        // 2. Event Listener para cargar historial
-        selector.addEventListener('change', async (e) => {
-            const company = e.target.value;
-            // Siempre cargamos historial, ya sea filtrado o todo ('all')
-            await loadCompanyHistory(company);
-        });
-
-        // Pre-seleccionar si venimos de guardar un resultado, si no, cargar todo por defecto
-        const activeData = JSON.parse(sessionStorage.getItem('active_results'));
-        if (activeData && activeData.company && companies.includes(activeData.company)) {
-            selector.value = activeData.company;
-            await loadCompanyHistory(activeData.company);
-        } else {
-            // Cargar todo por defecto si no hay selección previa
-            selector.value = 'all';
-            await loadCompanyHistory('all');
-        }
-
-    } catch (err) {
-        console.error("Error cargando empresas:", err);
-        selector.innerHTML = '<option>Error al cargar</option>';
-    }
-}
-
-async function loadCompanyHistory(companyName) {
-    const tableCard = document.getElementById('history-table-card');
-    const tableBody = document.getElementById('history-table-body');
-
-    // Mostrar estado de carga (opcional)
-    if (tableBody) tableBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Cargando historial...</td></tr>';
-    if (tableCard) tableCard.style.display = 'block';
-
-    try {
-        if (!supabaseClient) throw new Error("Supabase client is not initialized.");
-
-        let query = supabaseClient
-            .from('auditorias')
-            .select('*')
-            .order('fecha', { ascending: true });
-
-        // Si es 'all' o vacío, traemos todo. Si tiene nombre, filtramos.
-        if (companyName && companyName !== 'all') {
-            query = query.eq('empresa', companyName);
-        }
-
-        const { data, error } = await query;
-
-        if (error) throw error;
-
-        updateEvolutionUI(data);
-
-    } catch (err) {
-        console.error("Error cargando historial:", err);
-        if (tableBody) tableBody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:red;">Error al obtener datos.</td></tr>';
-    }
-}
-
-function hideHistoryUI() {
-    const tableCard = document.getElementById('history-table-card');
-    if (tableCard) tableCard.style.display = 'none';
-    // Opcional: Limpiar gráfico
-    if (window.evolutionLineChart) {
-        window.evolutionLineChart.destroy();
-    }
-}
-
-function updateEvolutionUI(historyData) {
-    // Render Tabla
-    const tableBody = document.getElementById('history-table-body');
-    if (tableBody) {
-        tableBody.innerHTML = historyData.map(h => {
-            const dateObj = new Date(h.fecha);
-            const formattedDate = dateObj.toLocaleDateString() + ' ' + dateObj.toLocaleTimeString();
-            return `
-            <tr>
-                <td>${formattedDate}</td>
-                <td>${h.empresa}</td>
-                <td>${h.puntos}</td>
-                <td>
-                    <button class="option-btn" style="padding:5px 10px; font-size:0.9rem;" onclick="loadAudit(${h.id})">
-                        Cargar
-                    </button>
-                </td>
-            </tr>
-            `;
-        }).join('');
-    }
-
-    // Render Gráfico
-    renderEvolutionChart(historyData);
-}
-
-function renderEvolutionChart(data) {
+    console.log("initEvolutionChart START");
     const ctx = document.getElementById('evolutionChart');
-    if (!ctx) return;
 
-    if (window.evolutionLineChart instanceof Chart) {
-        window.evolutionLineChart.destroy();
-    }
+    const tableBody = document.getElementById('history-table-body');
+    const tableCard = document.getElementById('history-table-card');
 
-    const labels = data.map(h => new Date(h.fecha).toLocaleDateString());
-    const scores = data.map(h => h.puntos);
-
-    window.evolutionLineChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Puntuación EBC',
-                data: scores,
-                borderColor: '#2ecc71',
-                backgroundColor: 'rgba(46, 204, 113, 0.1)',
-                tension: 0.3,
-                fill: true,
-                pointRadius: 6,
-                pointHoverRadius: 8,
-                borderWidth: 3
-            }]
-        },
-        options: {
-            plugins: {
-                tooltip: {
-                    callbacks: {
-                        label: function (context) {
-                            return `Puntos: ${context.parsed.y} / 430`;
-                        }
-                    }
-                },
-                legend: { display: true }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 430,
-                    title: { display: true, text: 'Puntuación Total' }
-                }
-            },
-            responsive: true,
-            maintainAspectRatio: false
-        }
-    });
-}
-
-// Global scope para que el onclick del HTML funcione
-window.loadAudit = async function (id) {
-    let btn = null;
-    try {
-        // Mostrar feedback visual
-        btn = window.event ? window.event.target : null;
-        if (btn) btn.textContent = "Cargando...";
-
-        if (!supabaseClient) throw new Error("Supabase client is not initialized.");
-
-        const { data, error } = await supabaseClient
-            .from('auditorias')
-            .select('*')
-            .eq('id', id)
-            .single();
-
-        if (error) throw error;
-
-        // Recuperar objeto resultados (JSON)
-        // Intentamos leer 'detalles' (nuevo formato) o 'resultados' (viejo formato)
-        const resultados = data.detalles || data.resultados;
-
-        if (!resultados || !resultados.categoryScores) {
-            throw new Error("Datos de auditoría corruptos o incompletos.");
-        }
-
-        sessionStorage.setItem('active_results', JSON.stringify({
-            company: data.empresa,
-            score: data.puntos,
-            categoryScores: resultados.categoryScores,
-            recommendations: resultados.recommendations,
-            timestamp: new Date(data.fecha).getTime() // Por compatibilidad
-        }));
-
-        window.location.href = 'resultados.html';
-
-    } catch (err) {
-        console.error("Error cargando auditoría:", err);
-        alert("Error al cargar la auditoría desde la nube: " + (err.message || err));
-        if (btn) btn.textContent = "Cargar";
-    }
-};
-
-window.clearHistory = async function () {
-    if (!confirm("⚠️ ¿Estás seguro de que quieres BORRAR TODO el historial de auditorías?\n\nEsta acción eliminará permanentemente todos los datos de la nube y del dispositivo. No se puede deshacer.")) {
+    if (!ctx) {
+        console.error("Canvas element 'evolutionChart' NOT FOUND.");
         return;
     }
 
-    const btn = window.event ? window.event.target : null;
-    if (btn) btn.textContent = "Borrando...";
-
     try {
-        if (!supabaseClient) throw new Error("Supabase client is not initialized.");
+        console.log("Fetching auditorias for Verdnatura...");
+        const { data, error } = await supabaseClient
+            .from('auditorias')
+            .select('*') // Get all fields including details
+            .eq('empresa', 'Verdnatura')
+            .order('fecha', { ascending: true });
 
-        // Borrar todo de Supabase (usamos neq id 0 como truco para seleccionar todo)
+        if (error) {
+            console.error("Supabase Error:", error);
+            throw error;
+        }
+
+        console.log("Supabase Data Fetched:", data);
+        if (data.length === 0) {
+            console.warn("No audit data found for Verdnatura.");
+        }
+
+        fetchedAudits = data; // Store globally
+
+        // 1. Populate Selector with Dates
+
+
+        // 2. Render Chart
+        const labels = data.map(d => new Date(d.fecha).toLocaleDateString());
+        const scores = data.map(d => d.puntos);
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Puntuación Verdnatura',
+                    data: scores,
+                    borderColor: '#2e7d32',
+                    tension: 0.3,
+                    fill: true,
+                    backgroundColor: 'rgba(46, 125, 50, 0.1)'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: true }
+                },
+                scales: {
+                    y: { beginAtZero: true, max: 1000 }
+                }
+            }
+        });
+
+        // 3. Populate Table
+        if (tableBody && tableCard) {
+            tableCard.style.display = 'block'; // Show table
+            tableBody.innerHTML = '';
+
+            // Sort Descending for table (newest first)
+            const sortedData = [...data].sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+
+            sortedData.forEach((audit) => {
+                const date = new Date(audit.fecha).toLocaleString();
+                // Find original index in fetchedAudits to load correct one
+                const originalIndex = fetchedAudits.findIndex(a => a.id === audit.id);
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td style="padding:12px; border-bottom:1px solid #eee;">${date}</td>
+                    <td style="padding:12px; border-bottom:1px solid #eee;">${audit.empresa}</td>
+                    <td style="padding:12px; border-bottom:1px solid #eee; font-weight:bold;">${audit.puntos}</td>
+                    <td style="padding:12px; border-bottom:1px solid #eee;">
+                        <button onclick="loadAudit(${originalIndex})" class="option-btn" style="padding: 5px 10px; font-size: 0.8rem; background: #2ecc71; color: white;">
+                            <i class="fas fa-upload"></i> Cargar
+                        </button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+    } catch (err) {
+        console.error("Error loading evolution:", err);
+    }
+}
+
+// Global Load Audit Function
+window.loadAudit = function (index) {
+    if (index < 0 || index >= fetchedAudits.length) return;
+
+    const audit = fetchedAudits[index];
+    const details = typeof audit.detalles === 'string' ? JSON.parse(audit.detalles) : audit.detalles;
+
+    const sessionData = {
+        company: audit.empresa,
+        score: audit.puntos,
+        categoryScores: details.categoryScores,
+        recommendations: details.recommendations,
+        ethicalRisk: details.ethicalRisk,
+        timestamp: new Date(audit.fecha).getTime()
+    };
+
+    sessionStorage.setItem('active_results', JSON.stringify(sessionData));
+    alert('Auditoria del ' + new Date(audit.fecha).toLocaleString() + ' cargada correctamente.');
+    window.location.href = 'resultados.html';
+};
+
+// Global Clear History
+window.clearHistory = async function () {
+    if (confirm("¿Seguro que quieres borrar TODO el historial de Verdnatura?")) {
         const { error } = await supabaseClient
             .from('auditorias')
             .delete()
-            .neq('id', 0);
+            .eq('empresa', 'Verdnatura');
 
-        if (error) throw error;
-
-        // Borrar local
-        localStorage.removeItem('ebcAuditHistory');
-        sessionStorage.removeItem('active_results');
-
-        alert("Historial borrado correctamente.");
-        window.location.reload();
-
-    } catch (err) {
-        console.error("Error borrando historial:", err);
-        alert("Error al borrar el historial: " + (err.message || err));
-        if (btn) btn.textContent = "Borrar todo el historial";
+        if (error) {
+            alert('Error al borrar: ' + error.message);
+        } else {
+            alert('Historial borrado.');
+            location.reload();
+        }
     }
 };
