@@ -1,7 +1,16 @@
-﻿const SUPABASE_URL = 'https://xdwvoqyausmpioslahwy.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhkd3ZvcXlhdXNtcGlvc2xhaHd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEyNDU2MTgsImV4cCI6MjA4NjgyMTYxOH0.F1pNn98WO-BxhWbxZ0c0VDzoDSlNJFTEe4Adtxykqtw';
+﻿const firebaseConfig = {
+    apiKey: "AIzaSyDTlodQcA9cZ_zOf_6uj_4EOF1s_xxoQ8A",
+    authDomain: "ecoaudit-92eb4.firebaseapp.com",
+    projectId: "ecoaudit-92eb4",
+    storageBucket: "ecoaudit-92eb4.firebasestorage.app",
+    messagingSenderId: "361654853529",
+    appId: "1:361654853529:web:74f820b57e6fb53c947d08",
+    measurementId: "G-5TD0HRKS4P"
+};
 
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// Initialize Firebase
+const app = firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
 // --- CAROUSEL LOGIC ---
 document.addEventListener('DOMContentLoaded', () => {
@@ -809,19 +818,13 @@ async function finishQuiz() {
     };
 
     try {
-        if (!supabaseClient) throw new Error("Supabase client is not initialized.");
-        const { data, error } = await supabaseClient
-            .from('auditorias')
-            .insert([
-                {
-                    empresa: companyName, // "Verdnatura"
-                    puntos: normalizedScore, // Save NORMALIZED score
-                    detalles: resultadosJSON,
-                    fecha: new Date().toISOString()
-                },
-            ]);
-
-        if (error) throw error;
+        if (!db) throw new Error("Firebase no está inicializado.");
+        await db.collection('auditorias').add({
+            empresa: companyName, // "Verdnatura"
+            puntos: normalizedScore, // Save NORMALIZED score
+            detalles: JSON.stringify(resultadosJSON),
+            fecha: new Date().toISOString()
+        });
 
         // Save to Session Storage for Results Page
         sessionStorage.setItem('active_results', JSON.stringify({
@@ -1244,28 +1247,28 @@ async function initEvolutionChart() {
 
     try {
         console.log("Fetching auditorias for Verdnatura...");
-        const { data, error } = await supabaseClient
-            .from('auditorias')
-            .select('*') // Get all fields including details
-            .eq('empresa', 'Verdnatura')
-            .order('fecha', { ascending: true });
+        const querySnapshot = await db.collection('auditorias')
+            .where('empresa', '==', 'Verdnatura')
+            .get();
 
-        if (error) {
-            console.error("Supabase Error:", error);
-            throw error;
-        }
+        const data = [];
+        querySnapshot.forEach((doc) => {
+            let docData = doc.data();
+            docData.id = doc.id;
+            data.push(docData);
+        });
 
-        console.log("Supabase Data Fetched:", data);
+        // Ensure chronological order for the chart (oldest first)
+        data.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+
+        console.log("Firebase Data Fetched:", data);
         if (data.length === 0) {
             console.warn("No audit data found for Verdnatura.");
         }
 
         fetchedAudits = data; // Store globally
 
-        // 1. Populate Selector with Dates
-
-
-        // 2. Render Chart
+        // 1. Render Chart
         const labels = data.map(d => new Date(d.fecha).toLocaleDateString());
         const scores = data.map(d => d.puntos);
 
@@ -1350,16 +1353,19 @@ window.loadAudit = function (index) {
 // Global Clear History
 window.clearHistory = async function () {
     if (confirm("¿Seguro que quieres borrar TODO el historial de Verdnatura?")) {
-        const { error } = await supabaseClient
-            .from('auditorias')
-            .delete()
-            .eq('empresa', 'Verdnatura');
-
-        if (error) {
-            alert('Error al borrar: ' + error.message);
-        } else {
+        try {
+            const querySnapshot = await db.collection('auditorias')
+                .where('empresa', '==', 'Verdnatura')
+                .get();
+            const batch = db.batch();
+            querySnapshot.forEach((doc) => {
+                batch.delete(doc.ref);
+            });
+            await batch.commit();
             alert('Historial borrado.');
             location.reload();
+        } catch (error) {
+            alert('Error al borrar: ' + error.message);
         }
     }
 };
